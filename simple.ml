@@ -2,6 +2,12 @@ type value =
     Int of int
   | Float of float
 
+(*Note that this function could be a member function of the value type*)
+let asfloat v =
+  match v with
+      Int i -> (float i)
+    | Float f -> f
+
 type binop =
     Plus
   | Minus
@@ -9,11 +15,7 @@ type binop =
   | Divide
   | Power
 
-let asfloat v =
-  match v with
-      Int i -> (float i)
-    | Float f -> f
-
+(*Note the pattern here where we model a lookup table using a function*)
 let lookup_binop =
   let dobinop iop fop v1 v2 =
     match (v1, v2) with
@@ -33,6 +35,7 @@ type unop =
   | Square
   | Sqroot
 
+(*Note the pattern here where we model a lookup table using a function*)
 let lookup_unop =
   let dounop iop fop v = match v with
       Int i -> Int (iop i)
@@ -45,6 +48,11 @@ let lookup_unop =
     | Square -> "sqr", dounop (thingyop ( * )) (thingyop ( *. ))
     | Sqroot -> "sqroot", function v -> Float (sqrt (asfloat v))
 
+(*These expressions don't have any identifiers*)
+(*To add them need to add extra expression constructor and deal with it 
+  in the eval and print functions
+  - eval would need an environment to lookup identifiers,
+    again could model this as a function mapping identifier to value*)
 type expression =
     BinOp of binop * expression * expression
   | UnOp of unop * expression
