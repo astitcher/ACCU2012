@@ -79,7 +79,7 @@ let string_of_exp e =
           | Power -> "**",4
       in
       dobraces pred p
-        (string_of_exp_b e1 pred)^s^(string_of_exp_b e2 pred)
+        ((string_of_exp_b e1 pred)^s^(string_of_exp_b e2 pred))
     in
     let string_of_unop op e p =
       let s =
