@@ -40,6 +40,9 @@ namespace UnionSolution {
     }
   }
 }
+// Note that the match construct in length is actually fairly simple
+// and simply mirrors the ml version, although the mechanics of destructuring
+// the tuple are a little fiddly std::tie really helps us here
 
 namespace ClassSolution1 {
   class intlist {
@@ -78,7 +81,16 @@ namespace ClassSolution1 {
     } else throw logic_error("intlist: not all cases covered");
   }
 }
+// Note that the data type definition itself seems a lot nicer here -
+// it's still way more verbose than the ml version, but we'll probably
+// have to live with that in any solution.
 
+// Note that class solution 1 has a really horrible looking length function
+// that uses chained typeid comparisons to perform the matching
+
+// Notice that std::tie again makes the tuple destructuring nice and simple
+
+// We can improve this by inventing our own little type info...
 namespace ClassSolution2 {
   enum intlist_const {Cons, Nil};
   class intlist {
@@ -123,6 +135,20 @@ namespace ClassSolution2 {
     }
   }
 }
+
+// However now notice that we had to change the names of the
+// data type implementing classes, because they clash with the
+// the enum names. Still the look of the length function is back
+// to much closer to the ml original.
+
+// It would be nice to do something about the ugly static_cast.
+
+// Of course if you've heard much C++ advice you're thinking "switching
+// on class types has a really bad smell! we should really do something
+// polymorphic - that's real OO, what C++ is all about!"
+
+// Well apart from the dubious conclusion straight out of the 80s, there
+// may be something in this - lets take a look...
 
 #include <iostream>
 
