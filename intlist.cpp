@@ -149,12 +149,69 @@ namespace ClassSolution2 {
 
 // Well apart from the dubious conclusion straight out of the 80s, there
 // may be something in this - lets take a look...
+namespace ClassSolution3 {
+  class intlist {
+  public:
+    virtual ~intlist() {}
+    virtual int length() = 0;
+  };
 
+  class Nil: public intlist {
+    int length();
+  };
+
+  class Cons: public intlist {
+    int i;
+    intlist* il;
+    int length();
+  public:
+    Cons(int i0, intlist* il0): i(i0), il(il0) {}
+  };
+
+  intlist* makeNil() {
+    return new Nil;
+  }
+
+  intlist* makeCons(int i, intlist* il) {
+    return new Cons(i, il);
+  }
+
+  int length(intlist* v) {
+    return v->length();
+  }
+  int Nil::length() {
+    return 0;
+  }
+  int Cons::length() {
+    return 1 + il->length();
+  }
+}
+// Well this does make the length function nice and brief actually about
+// as short as the ml version. However it has a serious downside - it's
+// actually not a single function at all! We've now split the functionality
+// of our previous single function, sort of smeared it out over all the
+// classes we're using to implement our rather simple list.
+
+// What this means is this that following this approach for the many
+// functions you might expect defined on a list type means adding
+// a function to every class for every function we need.
+
+// Not necessarily so bad in itself, but it might be a maintenance issue
+// as we have to add new functions in every class, so the class has to
+// change. So no separate compilation, can't add funcations to classes
+// without the source code (in other words someone else's classes).
+
+// In sum though this is the simplest and most easily understood version
+// of the code.
+
+// As I said earlier, this code is likely to leak badly, so lets address that
+// [Probably better to get this right ab initio actually]
+// ...
 #include <iostream>
 
 using std::cout;
 
-using namespace ClassSolution2;
+using namespace ClassSolution3;
 
 int main(){
   auto a = makeCons(12, makeCons(23, makeNil()));
