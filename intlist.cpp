@@ -86,7 +86,23 @@ namespace ClassSolution1 {
 // have to live with that in any solution.
 
 // Note that class solution 1 has a really horrible looking length function
-// that uses chained typeid comparisons to perform the matching
+// that uses chained typeid comparisons to perform the matching. This could
+// also be done by using dynamic cast, which would also solve the static cast
+// issue - trouble is dynamic_cast may not be very fast - but lets save
+// such considerations until we measure them!
+
+// So you could have..
+namespace ClassSolution1 {
+  int length1(intlist* v) {
+    if (dynamic_cast<Nil*>(v)) {
+      return 0;
+    } else if (auto cons = dynamic_cast<Cons*>(v)) {
+      int i; intlist* il;
+      tie(i, il) = cons->data();
+      return 1 + length1(il);
+    } else throw logic_error("intlist: not all cases covered");
+  }
+}
 
 // Notice that std::tie again makes the tuple destructuring nice and simple
 
@@ -158,17 +174,17 @@ namespace ClassSolution3 {
   class intlist {
   public:
     virtual ~intlist() {}
-    virtual int length() = 0;
+    virtual int length() const = 0;
   };
 
   class Nil: public intlist {
-    int length();
+    int length() const;
   };
 
   class Cons: public intlist {
     int i;
     intlist* il;
-    int length();
+    int length() const;
   public:
     Cons(int i0, intlist* il0): i(i0), il(il0) {}
   };
@@ -184,10 +200,10 @@ namespace ClassSolution3 {
   int length(intlist* v) {
     return v->length();
   }
-  int Nil::length() {
+  int Nil::length() const {
     return 0;
   }
-  int Cons::length() {
+  int Cons::length() const {
     return 1 + il->length();
   }
 }
@@ -211,14 +227,67 @@ namespace ClassSolution3 {
 
 // As I said earlier, this code is likely to leak badly, so lets address that
 // [Probably better to get this right ab initio actually]
-// ...
+
+// Here we encounter a problem - what kind of pointers do we need? Are the cons
+// cells in the list shared with anyone else? Well they aren't in our trivial
+// example, but in "the real world" our lists will be accessible and so we need
+// to assume they are shared - this is where garbage collection comes into its
+// own - you don't need to worry about the ownership patterns.
+
+// So lets just use shared_ptr<>! (unique_ptr<> is fine too in some other
+// application)
+
+#include <memory>
+
+using std::shared_ptr;
+using std::make_shared;
+
+namespace ClassSolution4 {
+  class intlist {
+  public:
+    virtual ~intlist() {}
+    virtual int length() const = 0;
+  };
+  typedef shared_ptr<intlist> intlist_ptr;
+
+  class Nil: public intlist {
+    int length() const;
+  };
+
+  class Cons: public intlist {
+    int i;
+    intlist_ptr il;
+    int length() const;
+  public:
+    Cons(int i0, const intlist_ptr& il0): i(i0), il(il0) {}
+  };
+
+  intlist_ptr makeNil() {
+    return make_shared<Nil>();
+  }
+
+  intlist_ptr makeCons(int i, intlist_ptr il) {
+    return make_shared<Cons>(i, il);
+  }
+
+  int length(const intlist_ptr v) {
+    return v->length();
+  }
+  int Nil::length() const {
+    return 0;
+  }
+  int Cons::length() const {
+    return 1 + il->length();
+  }
+}
+
 #include <iostream>
 
 using std::cout;
 
-using namespace ClassSolution3;
+using namespace ClassSolution1;
 
 int main(){
   auto a = makeCons(12, makeCons(23, makeNil()));
-  cout << length(a) << "\n";
+  cout << length1(a) << "\n";
 }
