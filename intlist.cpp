@@ -92,43 +92,46 @@ namespace ClassSolution1 {
 
 // We can improve this by inventing our own little type info...
 namespace ClassSolution2 {
-  enum intlist_const {Cons, Nil};
   class intlist {
   public:
     virtual ~intlist() {}
-    virtual intlist_const type() = 0;
+    enum intlist_const {Cons, Nil};
+    virtual intlist_const type() const = 0;
   };
 
-  class NilC: public intlist {
-    intlist_const type() {return Nil;}
+  class Nil: public intlist {
+    intlist_const type() const {return code();}
+  public:
+    static constexpr intlist_const code() {return intlist::Nil;}
   };
 
-  class ConsC: public intlist {
-    intlist_const type() {return Cons;}
+  class Cons: public intlist {
+    intlist_const type() const {return code();}
     int i;
     intlist* il;
   public:
-    ConsC(int i0, intlist* il0): i(i0), il(il0) {}
+    static constexpr intlist_const code() {return intlist::Cons;}
+    Cons(int i0, intlist* il0): i(i0), il(il0) {}
     tuple<int, intlist*> data() {
       return tie(i, il);
     }
   };
 
   intlist* makeNil() {
-    return new NilC;
+    return new Nil;
   }
 
   intlist* makeCons(int i, intlist* il) {
-    return new ConsC(i, il);
+    return new Cons(i, il);
   }
 
   int length(intlist* v) {
     switch (v->type()) {
-    case Nil:
+    case Nil::code():
       return 0;
-    case Cons:
+    case Cons::code():
       int i; intlist* il;
-      tie(i, il) = static_cast<ConsC*>(v)->data();
+      tie(i, il) = static_cast<Cons*>(v)->data();
       return 1 + length(il);
     default:
       throw logic_error("intlist: not all cases covered");
@@ -136,10 +139,12 @@ namespace ClassSolution2 {
   }
 }
 
-// However now notice that we had to change the names of the
-// data type implementing classes, because they clash with the
-// the enum names. Still the look of the length function is back
-// to much closer to the ml original.
+// Note we've had to complicate the base and other classes a bit to 
+// get the type code
+// However now notice that we had to get the enum values a little
+// differently - they can't share the same name as the actual classes
+// Still the look of the length function is back to much closer to the
+// ml original.
 
 // It would be nice to do something about the ugly static_cast.
 
