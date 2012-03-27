@@ -281,13 +281,62 @@ namespace ClassSolution4 {
   }
 }
 
+// Now to some of you all of this might be suggestive of a different approach
+// using boost::Variant to model the algebraic datatypes.
+
+// How does this look?
+// For a start it doesn't get rid of the classes per individual datatype
+// constructor:
+#include <boost/variant.hpp>
+namespace VariantSolution {
+  class Cons;
+  class Nil;
+
+  typedef boost::variant<Cons, Nil> intlist;
+
+  class Nil {
+  };
+
+  class Cons {
+    int i;
+    intlist* il;
+  public:
+    Cons(int i0, intlist* il0): i(i0), il(il0) {}
+    tuple<int, intlist*> data() {
+      return tie(i, il);
+    }
+  };
+
+  intlist* makeNil() {
+    return new intlist(Nil());
+  }
+
+  intlist* makeCons(int i, intlist* il) {
+    return new intlist(Cons(i, il));
+  }
+
+  int length(intlist* v) {
+    if (auto n = boost::get<Nil>(v)) {
+      return 0;
+    } else if (auto cons = boost::get<Cons>(v)) {
+      int i; intlist* il;
+      tie(i, il) = cons->data();
+      return 1 + length(il);
+    } else throw logic_error("intlist: not all cases covered");
+  }
+}
+
+// Boost::Variant does have one very good idea, which is to use visitors
+// solving the problem of extending the classes for every new operation.
+// But I bet you lot already thought of that being the OO hotshots you are!
+
 #include <iostream>
 
 using std::cout;
 
-using namespace ClassSolution1;
+using namespace VariantSolution;
 
 int main(){
   auto a = makeCons(12, makeCons(23, makeNil()));
-  cout << length1(a) << "\n";
+  cout << length(a) << "\n";
 }
