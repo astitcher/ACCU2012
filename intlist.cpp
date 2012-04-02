@@ -225,6 +225,69 @@ namespace ClassSolution3 {
 // In sum though this is the simplest and most easily understood version
 // of the code.
 
+// What about using a visitor pattern instead of having to add to the class
+// hierarchy all the time?
+
+// Big question is how to return a value from the visitors and what type
+// should it be - use a template parameter
+namespace VisitorClassSolution {
+  class Nil;
+  class Cons;
+  template <typename T>
+  class intlistVisitor {
+  public:
+    virtual T operator()(const Nil&) const = 0;
+    virtual T operator()(const Cons&) const = 0;
+  };
+
+  class intlist {
+  public:
+    virtual ~intlist() {}
+    virtual int apply(const intlistVisitor<int>&) = 0;
+  };
+
+  class Nil: public intlist {
+    int apply(const intlistVisitor<int>& v) {
+      return v(*this);
+    }
+  };
+
+  class Cons: public intlist {
+    tuple<int,intlist*> v;
+    int apply(const intlistVisitor<int>& v) {
+      return v(*this);
+    }
+  public:
+    Cons(int i0, intlist* il0): v(i0, il0) {}
+    tuple<int, intlist*> data() const {
+      return v;
+    }
+  };
+
+  intlist* makeNil() {
+    return new Nil;
+  }
+
+  intlist* makeCons(int i, intlist* il) {
+    return new Cons(i, il);
+  }
+
+  class intlistlength: public intlistVisitor<int> {
+    int operator() (const Nil&) const {
+      return 0;
+    }
+    int operator() (const Cons& c) const {
+      int i; intlist* il;
+      tie(i, il) = c.data();
+      return 1 + il->apply(*this); // This is what recursion looks like!
+    }
+  };
+
+  int length(intlist* v) {
+    return v->apply(intlistlength());
+  }
+}
+
 // As I said earlier, this code is likely to leak badly, so lets address that
 // [Probably better to get this right ab initio actually]
 
@@ -334,7 +397,7 @@ namespace VariantSolution {
 
 using std::cout;
 
-using namespace VariantSolution;
+using namespace VisitorClassSolution;
 
 int main(){
   auto a = makeCons(12, makeCons(23, makeNil()));
