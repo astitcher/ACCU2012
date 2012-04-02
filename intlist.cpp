@@ -38,6 +38,8 @@ namespace UnionSolution {
       // Deconstruct the tuple
       int i; intlist* il; tie(i,il) = v->u.consdata;
       return 1 + length(il);
+      // or could just do:
+      // return 1 + get<1>(v->u.consdata);
     }
   }
 }
@@ -359,12 +361,11 @@ namespace VariantSolution {
   };
 
   class Cons {
-    int i;
-    intlist* il;
+    tuple<int, intlist*> v;
   public:
-    Cons(int i0, intlist* il0): i(i0), il(il0) {}
-    tuple<int, intlist*> data() {
-      return tie(i, il);
+    Cons(int i0, intlist* il0): v(i0, il0) {}
+    tuple<int, intlist*> data() const {
+      return v;
     }
   };
 
@@ -393,18 +394,32 @@ namespace VariantSolution {
 // Boost::Variant does have one very good idea, which is to use visitors
 // solving the problem of extending the classes for every new operation.
 // But I bet you lot already thought of that being the OO hotshots you are!
-
+// [Note need to rearrange material sequence here introduced visitor above]
 namespace VariantSolution {
-
+  class lengthVisitor: public boost::static_visitor<int> {
+  public:
+    int operator()(const Nil&) const {
+      return 0;
+    }
+    int operator()(const Cons& c) const {
+      int i; intlist* il;
+      tie(i, il) = c.data();
+      return 1 + boost::apply_visitor(*this, *il);
+    }
+  };
+    
+  int length1(intlist* v) {
+    return boost::apply_visitor(lengthVisitor(), *v);
+  }
 }
 
 #include <iostream>
 
 using std::cout;
 
-using namespace VisitorClassSolution;
+using namespace VariantSolution;
 
 int main(){
   auto a = makeCons(12, makeCons(23, makeNil()));
-  cout << length(a) << "\n";
+  cout << length1(a) << "\n";
 }
