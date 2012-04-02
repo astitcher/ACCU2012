@@ -4,6 +4,7 @@
 
 using std::tuple;
 using std::tie;
+using std::get;
 using std::logic_error;
 
 namespace UnionSolution {
@@ -54,12 +55,11 @@ namespace ClassSolution1 {
   };
 
   class Cons: public intlist {
-    int i;
-    intlist* il;
+    tuple<int,intlist*> v;
   public:
-    Cons(int i0, intlist* il0): i(i0), il(il0) {}
-    tuple<int, intlist*> data() {
-      return tie(i, il);
+    Cons(int i0, intlist* il0): v(i0, il0) {}
+    tuple<int, intlist*> data() const {
+      return v;
     }
   };
 
@@ -123,13 +123,12 @@ namespace ClassSolution2 {
 
   class Cons: public intlist {
     intlist_const type() const {return code();}
-    int i;
-    intlist* il;
+    tuple<int, intlist*> v;
   public:
     static constexpr intlist_const code() {return intlist::Cons;}
-    Cons(int i0, intlist* il0): i(i0), il(il0) {}
-    tuple<int, intlist*> data() {
-      return tie(i, il);
+    Cons(int i0, intlist* il0): v(i0, il0) {}
+    tuple<int, intlist*> data() const {
+      return v;
     }
   };
 
@@ -182,11 +181,10 @@ namespace ClassSolution3 {
   };
 
   class Cons: public intlist {
-    int i;
-    intlist* il;
+    tuple<int, intlist*> v;
     int length() const;
   public:
-    Cons(int i0, intlist* il0): i(i0), il(il0) {}
+    Cons(int i0, intlist* il0): v(i0, il0) {}
   };
 
   intlist* makeNil() {
@@ -204,7 +202,7 @@ namespace ClassSolution3 {
     return 0;
   }
   int Cons::length() const {
-    return 1 + il->length();
+    return 1 + get<1>(v)->length();
   }
 }
 // Well this does make the length function nice and brief actually about
@@ -389,9 +387,16 @@ namespace VariantSolution {
   }
 }
 
+// Note that the structure of this is not very different from the original
+// class based solutions.
+
 // Boost::Variant does have one very good idea, which is to use visitors
 // solving the problem of extending the classes for every new operation.
 // But I bet you lot already thought of that being the OO hotshots you are!
+
+namespace VariantSolution {
+
+}
 
 #include <iostream>
 
