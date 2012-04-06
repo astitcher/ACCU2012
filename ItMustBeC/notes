@@ -1,0 +1,109 @@
+Hello, I'm Andrew Stitcher, I work for Red Hat which as you know is a
+large open source company and the open source world provides at least
+some of the perspective for this talk: "When only C will do"
+
+Looking at a couple of the other talks at this years ACCU conference I
+think I might be taking a rather unpopular
+direction. After all you might have just come from a talk telling you
+that C is going the way of the Dodo - or perhaps that isn't exactly
+what Dirk was saying - I couldn't get
+to that talk as I was busy here in this room trying to keep people from
+their post prandial nap! I hope I succeeded for at least some of them.
+
+And tomorrow none other than Bob Martin is giving what sounds like a
+eulogy for C - "I come to bury C, not to praise it" anyone?
+
+When I put the proposal for this session together, oh, way back in
+September I think, I was fairly convinced by the arguments I'm going
+to bring you in the next few minutes. However as I thought more and
+actually starting preparing this talk my views have changed a bit. So
+it's fair to treat this as a bit of a "devils advocate" position - see
+if you can tell when I don't actually believe what I'm telling you!
+
+However it worth pointing out now that in this talk I'm coming from a
+very practical standpoint. I'm not going to be telling of anything the
+theorectically C can do that no other language can do (though there
+may be some things like that). Pretty much everything I'm talking
+about here is about actually programming in the real world or at least
+in the open source world which is some sort of approximation to the
+real world!
+
+[2 mins to here]?
+
+I started thinking about C and its uses because of the project I work
+on for money. This is the Qpid project which is an implementation of
+the AMQP protocol. And this is a protocol used to provide messaging
+middleware (ooh I hate that jargon) capabilities. In practice what
+this means is that AMQP systems have a central message broker which clients
+talk to to transfer their messages. The language the broker is written
+in is unimportant at the moment because it's not visible at this
+architectural level, all communication between the clients is via the
+broker using the standardised AMQP protocol.
+
+[A little picture of broker and client might actually help here]
+
+Now here is an interesting thing, people want to be able to use
+messaging between components of their systems irrespective of what
+language they write their systems in, so that picture turns into
+something more like this
+
+[Picture of broker and clients again but each client is in a different
+language]
+
+At present the Qpid project is supporting APIs for quite a few
+languages and environments: C++, Java JMS, Python, ruby, Perl, and
+also the .Net environment, we also support Linux and Windows
+platforms, and Solaris and FreeBSD aren't far away.
+
+For good historical reasons the project has 3 different separate
+implementations of the AMQP protocol - in Java, in C++ and in
+Python - notice that none of these are C!. Most of the other language
+APIs actually layer on top of the C++ API
+using a great tool called SWIG which knows how to automatically create
+code to tie an API into the foreign function interface for that
+language implementation. The .Net implementation is actually built on
+top of hand built code which does similar. So we are currently
+maintaining 3 different implementations of the same protocol, at this
+point you might be getting a glimmer of where I'm going!
+
+Now this is quite as bad as you might think, because this is a defined
+protocol with an actual written standard so it's not as bad as having
+say to reverse engineer the protocol from one set of code to implement
+it in the other.
+
+Ok, I lied before, when I said AMQP was a standard, well sort of, the
+problem is that it's not just one standard! Over the years it has
+passed through a number of revisions 0-8, 0-9, 0-9.1, 0-10 and now it
+has a proposed standard 1.0 revision which is currently making it's
+way through the OASIS standardisation process.
+
+[Picture of the different protocols?]
+
+Qpid actually supports the 0-10 standard in all the languages and the
+Java code also supports some of the earlier versions too (0-9 I think)
+
+So presently our big task is to implement the 1.0 protocol
+version. And obviously we want to do this with the minimum effort now
+and the minimum effort going forwards in maintenance.
+
+So this has led us into thinking about writing code that would be usable
+in all of these environments and languages.
+
+Another goal of the project is to be broadly portable to as many
+platforms as possible, from embedded (though not the tiniest PLCs)
+through mobile handsets to the more standard desktop and server
+environments. 
+
+So now you can see where I was originally coming from.
+
+It seems that C is going to be something like a practical solution to
+many (possibly all) these problems.
+
+[7.5mins to here]
+
+So how does it help us?
+
+[Pitfalls - actually not C pitfalls per se perhaps,
+need to understand the threading environment of the language your
+binding into. Or at least need to make sure that the API you expose
+doesn't require grabbing control or creating a thread.
