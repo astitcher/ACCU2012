@@ -413,6 +413,16 @@ namespace VariantSolution {
   }
 }
 
+// Note that there are some limitations of the class based with
+// virtual function approach and the visitor approach - It only allows you to match a particular
+// type constructor once using the pure virtual function approach.
+// If the match logic is more complex then you might need extra conditional
+// logic in the virtual function.
+// However on the positive side
+// the compiler ensures that you have covered all the cases, because it
+// won't allow you to instantiate the class that represents that constructor
+// without the relevant virtual function needed for the match case.
+
 #include <iostream>
 
 using std::cout;
