@@ -38,11 +38,12 @@ let rec eval exp env =
 
 exception VariableNotfound of string
 
-let _ =
+(* Pretty roundabout quadratic solver *)
+let quadratic_solver a b c =
   let vars = function
-    | "a" -> 4.
-    | "b" -> 0.
-    | "c" -> -2.
+    | "a" -> a
+    | "b" -> b
+    | "c" -> c
     | v -> raise (VariableNotfound v)
   in
   let quadraticP =
@@ -58,3 +59,7 @@ let _ =
     Printf.printf "%s\n%f\n%s\n%f\n"
         (string_of_exp quadraticP) (eval quadraticP vars)
         (string_of_exp quadraticN) (eval quadraticN vars)
+
+let _ =
+  quadratic_solver 4. 0. (-2.)
+
