@@ -60,6 +60,16 @@ let quadratic_solver a b c =
         (string_of_exp quadraticP) (eval quadraticP vars)
         (string_of_exp quadraticN) (eval quadraticN vars)
 
+(* Now some more complex matching *)
+let multiplyout = function
+  | Times(Plus(a,b),Plus(c,d)) -> Plus(Plus(Times(a,c),Times(a,d)),Plus(Times(b,c),Times(b,d)))
+  | e -> e
+
+let simplify = function
+  | Plus(a,b) when a=b -> Times(Integer 2, a)
+  | Times(a,b) when a=b -> Power(a, Integer 2)
+  | e -> e
+
 let _ =
   quadratic_solver 4. 0. (-2.)
 
