@@ -90,7 +90,7 @@ So this has led us into thinking about writing code that would be usable
 in all of these environments and languages.
 
 Another goal of the project is to be broadly portable to as many
-platforms as possible, from embedded (though not the tiniest PLCs)
+platforms as possible, from embedded (though probably not the tiniest PLCs)
 through mobile handsets to the more standard desktop and server
 environments. 
 
@@ -102,6 +102,63 @@ many (possibly all) these problems.
 [7.5mins to here]
 
 So how does it help us?
+
+[Essential motivating point - C is a very good common language to program in as nearly every other
+language/system can interface directly to it]
+
+This by itself doesn't necessarily mean that you have to write your code in C itself just that it needs to have
+a good C interface. Now C++ has extern "C" which allows pretty good interoperation with C on this
+level.
+
+However then portability is felt. While it's perhaps not 100% true to say that every machine has a
+C compiler. It 's probably very close to the truth, in any case every practical machine that we care
+about does have a C compiler, from the smallest. Hold on a sec though, many or most of those compilers are
+actually gcc the gnu compiler collection and C++ is actually supported by gcc - actually one of the
+best C++ compilers out there. However C++ has a much more substantial runtime support library than C
+and that is not actually available everywhere. Still I find it notable that the arduino compiler
+environment (which is based on gcc) actually does support C++ although possibly not with the full
+language (exception and runtime type info are almost certainly not present in the supplied runtime).
+The arduino as you'll know is a hobbyist microcontroller with only a few k of program memory (16/32k)
+and even less RAM (1/2k).
+
+This is C as portable assembler: For pretty much every platform you care about the C ABI is standardised.
+therefore if you write a library on C anyone can use it. This is emphatically not the case for C++.
+Until quite recently C++ had hardly a standard ABI on any platform - Solaris provides an
+example where there still are commonly 2 C++ ABIs (GCCs and SunPros - or whatever Oracle call it now)
+that might be in use, meaning that producing a
+C++ library for use by an unknown developer can be an exercise in high frustration. As even if they
+accidentally link together nothing good will happen afterwards. This can even be an issue if the
+exported API/ABI is actually C because the runtimes are incompatible. Essentially it means that you
+end up producing 2 library variants.
+
+[Next points - Social community based points - essentially that C++ is not a great language for
+OS community projects.
+* Open source systems software is almost entirely written in C (The new linker gold is about the only
+exception I could find), and there is not so much
+experience in this world with maintaining C++ code, there is actually a level of antagonism to the
+language - in the real world this is an issue.
+* C++ is a big complex language and in a loose community it is hard to coalesce on a subset, as
+there is always someone who wants to try that exciting feature they've just heard about. This means
+that the code can grow in mutually incomprehensible silos. As only a developer who has worked on a section
+of code can maintain that code easily. This quickly becomes a barrier to development.
+* More importantly it is a strong barrier to new people being able to quickly and casually hack
+on the codebase and this is an important problem for an open source project. well they can but they
+are for too likely to make mistakes
+* And finally this leads to tool support for C++ has been too weak historically (it getting better
+now that clang supports nearly all of the modern language, and is designed so that you can use its
+parser in your own tools). This has meant that it was practically impossible for us to automate
+any sort of language checking.
+
+Of course
+
+C as low level language, again portable assembler:
+* C hides very little from you and doesn't as much as generate a hidden indirect call. So this
+can be pretty important if you want to have full control and understanding over what the machine
+is doing.
+
+It also means that you're not locked into doing classes for example in exactly the way that C++
+does it. It'll be more verbose, and you might end up using macros to help you (ugh!) but you
+could implement say prototype based OO and do it efficiently.
 
 [Pitfalls - actually not C pitfalls per se perhaps,
 need to understand the threading environment of the language your
