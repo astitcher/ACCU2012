@@ -104,7 +104,8 @@ many (possibly all) these problems.
 So how does it help us?
 
 [Essential motivating point - C is a very good common language to program in as nearly every other
-language/system can interface directly to it]
+language/system can interface directly to it, and the number of systems actually written in C itself is not 
+to underestimated.
 
 This by itself doesn't necessarily mean that you have to write your code in C itself just that it needs to have
 a good C interface. Now C++ has extern "C" which allows pretty good interoperation with C on this
