@@ -46,6 +46,11 @@ using std::logic_error;
     static constexpr typename T::types code() {return C;}
   };
 
+  // This approach to providing multiple virtual functions
+  // with the different signature fails to work because function
+  // lookup only looks for the first place with a member of the
+  // name we're after. If that scope doesn't have a matching
+  // member function then it will just fail.
   template <typename R, typename... Ts>
   class AVisitor;
 
