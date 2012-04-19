@@ -10,6 +10,8 @@ using std::tie;
 using std::get;
 using std::logic_error;
 
+#define SHARED_PTR
+
 // General template to make algebraic datatype declarations easier
 
   template <typename T, typename V>
@@ -33,7 +35,7 @@ using std::logic_error;
     ADatatype(Args... a) :
       v(a...)
     {}
-    D data() const {
+    const D& data() const {
       return v;
     }
     static constexpr typename T::types code() {return C;}
@@ -68,14 +70,31 @@ using std::logic_error;
   
 namespace AllClassSolution {
   class intlist;
+#ifdef SHARED_PTR
   typedef shared_ptr<intlist> intlist_ptr;
+  inline intlist* get(intlist_ptr il) {
+    return il.get();
+  }
+#else
+  typedef intlist* intlist_ptr;
+  inline intlist* get(intlist_ptr il) {
+    return il;
+  }
+#endif
 
   class Nil;
   class Cons;
+  
+  template <typename T>
+  class intlistVisitor {
+  public:
+    virtual T operator()(const Nil&) const = 0;
+    virtual T operator()(const Cons&) const = 0;
+  };
 
   enum class types {Cons, Nil};
 
-  class intlist : public ADatatype_base<types, AVisitor<int, Nil, Cons>> {
+  class intlist : public ADatatype_base<types, intlistVisitor<int>> {
   public:
     virtual int length() const = 0;
   };
@@ -101,15 +120,26 @@ namespace AllClassSolution {
     {}
   };
 
+  const tuple<int, intlist_ptr>& cons(const intlist_ptr& il) { return static_cast<Cons*>(get(il))->data(); }
+
+#ifdef SHARED_PTR
   intlist_ptr makeNil() {
     return make_shared<Nil>();
   }
 
-  intlist_ptr makeCons(int i, intlist_ptr il) {
+  intlist_ptr makeCons(int i, const intlist_ptr& il) {
     return make_shared<Cons>(i, il);
   }
+#else
+  intlist_ptr makeNil() {
+    return new Nil();
+  }
 
-  int length(const intlist_ptr v) {
+  intlist_ptr makeCons(int i, const intlist_ptr& il) {
+    return new Cons(i, il);
+  }
+#endif
+  int length(const intlist_ptr& v) {
     return v->length();
   }
 
@@ -117,39 +147,42 @@ namespace AllClassSolution {
     return 0;
   }
   int Cons::length() const {
-    int i; intlist_ptr il;
-    tie(i, il) = data();
+    //int i; intlist_ptr il;
+    //tie(i, il) = data();
+    auto& il = std::get<1>(data());
     return 1 + il->length();
-    // return 1 + get<1>(data())->length();
   }
 
-  int length1(intlist_ptr v) {
-    if (typeid(*v.get()) == typeid(Nil)) {
+  int length1(const intlist_ptr& v) {
+    if (typeid(*get(v)) == typeid(Nil)) {
       return 0;
-    } else if (typeid(*v.get()) == typeid(Cons)) {
-      int i; intlist_ptr il;
-      tie(i, il) = static_cast<Cons*>(v.get())->data();
+    } else if (typeid(*get(v)) == typeid(Cons)) {
+      //int i; intlist_ptr il;
+      //tie(i, il) = cons(v);
+      auto& il = std::get<1>(cons(v));
       return 1 + length1(il);
     } else throw logic_error("intlist: not all cases covered");
   }
 
-  int length2(intlist_ptr v) {
-    if (dynamic_cast<Nil*>(v.get())) {
+  int length2(const intlist_ptr& v) {
+    if (dynamic_cast<Nil*>(get(v))) {
       return 0;
-    } else if (auto cons = dynamic_cast<Cons*>(v.get())) {
-      int i; intlist_ptr il;
-      tie(i, il) = cons->data();
+    } else if (auto cons = dynamic_cast<Cons*>(get(v))) {
+      //int i; intlist_ptr il;
+      //tie(i, il) = cons->data();
+      auto& il = std::get<1>(cons->data());
       return 1 + length2(il);
     } else throw logic_error("intlist: not all cases covered");
   }
 
-  int length3(intlist_ptr v) {
+  int length3(const intlist_ptr& v) {
     switch (v->type()) {
     case Nil::code():
       return 0;
     case Cons::code(): {
-      int i; intlist_ptr il;
-      tie(i, il) = static_cast<Cons*>(v.get())->data();
+      //int i; intlist_ptr il;
+      //tie(i, il) = cons(v);
+      auto& il = std::get<1>(cons(v));
       return 1 + length3(il);
     }
     default:
@@ -157,40 +190,46 @@ namespace AllClassSolution {
     }
   }
 
-  class intlistlength: public AVisitor<int,Nil,Cons> {
+  class intlistlength: public intlistVisitor<int> {
     int operator() (const Nil&) const {
       return 0;
     }
     int operator() (const Cons& c) const {
-      int i; intlist_ptr il;
-      tie(i, il) = c.data();
+      //int i; intlist_ptr il;
+      //tie(i, il) = c.data();
+      auto& il = std::get<1>(c.data());
       return 1 + il->apply(*this); // This is what recursion looks like!
     }
   };
 
-  int length4(intlist_ptr v) {
+  int length4(const intlist_ptr& v) {
     return v->apply(intlistlength());
   }
 }
 
 #include <iostream>
 #include <functional>
+#include <chrono>
 
 using std::cout;
 using std::function;
 
-void run_loop(int count, const function<void()>& f) {
-    for (int i=0; i<count; ++i) f();
+void run_loop(const char* label, int count, const function<void()>& f) {
+    auto start = std::chrono::high_resolution_clock::now();
+    for (auto i=0; i<count; ++i) f();
+    auto end = std::chrono::high_resolution_clock::now();
+    std::cout << label << std::chrono::duration_cast<std::chrono::microseconds>(end-start).count() << " us\n";
 }
 
 int main(){
   {
     using namespace AllClassSolution;
     auto a = makeCons(12, makeCons(23, makeNil()));
-    run_loop(10000,[&a]{auto l = length(a);});
-    run_loop(10000,[&a]{auto l = length1(a);});
-    run_loop(10000,[&a]{auto l = length2(a);});
-    run_loop(10000,[&a]{auto l = length3(a);});
-    run_loop(10000,[&a]{auto l = length4(a);});
+    auto c = 1000000;
+    run_loop("Template length  ", c,[&a]{(void) length(a);});
+    run_loop("Template length1 ", c,[&a]{(void) length1(a);});
+    run_loop("Template length2 ", c,[&a]{(void) length2(a);});
+    run_loop("Template length3 ", c,[&a]{(void) length3(a);});
+    run_loop("Template length4 ", c,[&a]{(void) length4(a);});
   }
 }

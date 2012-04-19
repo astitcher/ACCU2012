@@ -26,10 +26,12 @@ namespace ClassSolution1 {
     tuple<int,intlist_ptr> v;
   public:
     Cons(int i0, intlist_ptr il0): v(i0, il0) {}
-    tuple<int, intlist_ptr> data() const {
+    const tuple<int, intlist_ptr>& data() const {
       return v;
     }
   };
+
+  const tuple<int, intlist_ptr>& cons(const intlist_ptr il) { return static_cast<Cons*>(il)->data(); }
 
   intlist_ptr makeNil() {
     return new Nil;
@@ -44,7 +46,7 @@ namespace ClassSolution1 {
       return 0;
     } else if (typeid(*v) == typeid(Cons)) {
       int i; intlist_ptr il;
-      tie(i, il) = static_cast<Cons*>(v)->data();
+      tie(i, il) = cons(v);
       return 1 + length(il);
     } else throw logic_error("intlist: not all cases covered");
   }
@@ -53,9 +55,10 @@ namespace ClassSolution1 {
 // it's still way more verbose than the ml version, but we'll probably
 // have to live with that in any solution.
 
-// Note that class solution 1 has a really horrible looking length function
-// that uses chained typeid comparisons to perform the matching. This could
-// also be done by using dynamic cast, which would also solve the static cast
+// Note that class solution 1 has a fairly horrible looking length function
+// that uses chained typeid comparisons to perform the matching. And note the static cast
+// Hidden away in the accessor - this is really no more unsafe than using the union before.
+// This could also be done by using dynamic cast, which would also solve the static cast
 // issue - trouble is dynamic_cast may not be very fast - but lets save
 // such considerations until we measure them!
 
@@ -73,6 +76,7 @@ namespace ClassSolution1 {
 }
 
 // Notice that std::tie again makes the tuple destructuring nice and simple
+// and avoids the accessor completely.
 
 // We can improve this by inventing our own little type info...
 namespace ClassSolution2 {
@@ -98,10 +102,12 @@ namespace ClassSolution2 {
   public:
     static constexpr intlist_const code() {return intlist::Cons;}
     Cons(int i0, intlist_ptr il0): v(i0, il0) {}
-    tuple<int, intlist_ptr> data() const {
+    const tuple<int, intlist_ptr>& data() const {
       return v;
     }
   };
+
+  const tuple<int, intlist_ptr>& cons(const intlist_ptr il) { return static_cast<Cons*>(il)->data(); }
 
   intlist_ptr makeNil() {
     return new Nil;
@@ -117,7 +123,7 @@ namespace ClassSolution2 {
       return 0;
     case Cons::code():
       int i; intlist_ptr il;
-      tie(i, il) = static_cast<Cons*>(v)->data();
+      tie(i, il) = cons(v);
       return 1 + length(il);
     default:
       throw logic_error("intlist: not all cases covered");
@@ -136,7 +142,6 @@ namespace ClassSolution2 {
 // things you could do with the data structure as algebraic types are
 // closed so enumerating all the possible sub-types is no problem.
 
-// It would be nice to do something about the ugly static_cast.
 
 // Of course if you've heard much C++ advice you're thinking "switching
 // on class types has a really bad smell! we should really do something
@@ -163,7 +168,7 @@ namespace ClassSolution3 {
     int length() const;
   public:
     Cons(int i0, intlist_ptr il0): v(i0, il0) {}
-    tuple<int, intlist_ptr> data() const {
+    const tuple<int, intlist_ptr>& data() const {
       return v;
     }
   };
@@ -183,7 +188,7 @@ namespace ClassSolution3 {
     return 0;
   }
   int Cons::length() const {
-    return 1 + get<1>(v)->length();
+    return 1 + get<1>(data())->length();
     // Can't use length(get<1>(v)) because 
     // name resolution picks out the class member
     // not the free function, which makes it look
@@ -254,7 +259,7 @@ namespace VisitorClassSolution {
     }
   public:
     Cons(int i0, intlist_ptr il0): v(i0, il0) {}
-    tuple<int, intlist_ptr> data() const {
+    const tuple<int, intlist_ptr>& data() const {
       return v;
     }
   };
@@ -370,20 +375,22 @@ namespace AllClassSolution {
     static constexpr intlist_const code() {return intlist::Cons;}
 
     Cons(int i0, const intlist_ptr& il0): v(i0, il0) {}
-    tuple<int, intlist_ptr> data() const {
+    const tuple<int, intlist_ptr>& data() const {
       return v;
     }
   };
+
+  const tuple<int, intlist_ptr>& cons(const intlist_ptr& il) { return static_cast<Cons*>(il.get())->data(); }
 
   intlist_ptr makeNil() {
     return make_shared<Nil>();
   }
 
-  intlist_ptr makeCons(int i, intlist_ptr il) {
+  intlist_ptr makeCons(int i, const intlist_ptr& il) {
     return make_shared<Cons>(i, il);
   }
 
-  int length(const intlist_ptr v) {
+  int length(const intlist_ptr& v) {
     return v->length();
   }
 
@@ -394,17 +401,17 @@ namespace AllClassSolution {
     return 1 + get<1>(v)->length();
   }
 
-  int length1(intlist_ptr v) {
+  int length1(const intlist_ptr& v) {
     if (typeid(*v.get()) == typeid(Nil)) {
       return 0;
     } else if (typeid(*v.get()) == typeid(Cons)) {
       int i; intlist_ptr il;
-      tie(i, il) = static_cast<Cons*>(v.get())->data();
+      tie(i, il) = cons(v);
       return 1 + length1(il);
     } else throw logic_error("intlist: not all cases covered");
   }
 
-  int length2(intlist_ptr v) {
+  int length2(const intlist_ptr& v) {
     if (dynamic_cast<Nil*>(v.get())) {
       return 0;
     } else if (auto cons = dynamic_cast<Cons*>(v.get())) {
@@ -414,13 +421,13 @@ namespace AllClassSolution {
     } else throw logic_error("intlist: not all cases covered");
   }
 
-  int length3(intlist_ptr v) {
+  int length3(const intlist_ptr& v) {
     switch (v->type()) {
     case Nil::code():
       return 0;
     case Cons::code(): {
       int i; intlist_ptr il;
-      tie(i, il) = static_cast<Cons*>(v.get())->data();
+      tie(i, il) = cons(v);
       return 1 + length3(il);
     }
     default:
@@ -439,7 +446,7 @@ namespace AllClassSolution {
     }
   };
 
-  int length4(intlist_ptr v) {
+  int length4(const intlist_ptr& v) {
     return v->apply(intlistlength());
   }
 }
@@ -456,32 +463,33 @@ namespace VariantSolution {
   class Nil;
 
   typedef boost::variant<Cons, Nil> intlist;
+  typedef intlist* intlist_ptr;
 
   class Nil {
   };
 
   class Cons {
-    tuple<int, intlist*> v;
+    tuple<int, intlist_ptr> v;
   public:
-    Cons(int i0, intlist* il0): v(i0, il0) {}
-    tuple<int, intlist*> data() const {
+    Cons(int i0, intlist_ptr il0): v(i0, il0) {}
+    const tuple<int, intlist_ptr>& data() const {
       return v;
     }
   };
 
-  intlist* makeNil() {
+  intlist_ptr makeNil() {
     return new intlist(Nil());
   }
 
-  intlist* makeCons(int i, intlist* il) {
+  intlist_ptr makeCons(int i, intlist_ptr il) {
     return new intlist(Cons(i, il));
   }
 
-  int length(intlist* v) {
-    if (auto n = boost::get<Nil>(v)) {
+  int length(intlist_ptr v) {
+    if ( boost::get<Nil>(v) ) {
       return 0;
     } else if (auto cons = boost::get<Cons>(v)) {
-      int i; intlist* il;
+      int i; intlist_ptr il;
       tie(i, il) = cons->data();
       return 1 + length(il);
     } else throw logic_error("intlist: not all cases covered");
@@ -502,13 +510,13 @@ namespace VariantSolution {
       return 0;
     }
     int operator()(const Cons& c) const {
-      int i; intlist* il;
+      int i; intlist_ptr il;
       tie(i, il) = c.data();
       return 1 + boost::apply_visitor(*this, *il);
     }
   };
     
-  int length1(intlist* v) {
+  int length1(intlist_ptr v) {
     return boost::apply_visitor(lengthVisitor(), *v);
   }
 }
@@ -524,51 +532,62 @@ namespace VariantSolution {
 // without the relevant virtual function needed for the match case.
 
 #include <iostream>
+#include <functional>
+#include <chrono>
 
 using std::cout;
+using std::function;
+
+void run_loop(const char* label, int count, const function<void()>& f) {
+    auto start = std::chrono::high_resolution_clock::now();
+    for (auto i=0; i<count; ++i) f();
+    auto end = std::chrono::high_resolution_clock::now();
+    std::cout << label << std::chrono::duration_cast<std::chrono::microseconds>(end-start).count() << " us\n";
+}
 
 
 int main(){
+  auto c = 1000000;
   {
     using namespace UnionSolution;
     auto a = makeCons(12, makeCons(23, makeNil()));
-    cout << length(a) << "\n";
-    cout << length1(a) << "\n";
+    run_loop("Union length  ", c,[&a]{(void) length(a);});
+    run_loop("Union length1 ", c,[&a]{(void) length1(a);});
   }
   {
     using namespace ClassSolution1;
     auto a = makeCons(12, makeCons(23, makeNil()));
-    cout << length(a) << "\n";
-    cout << length1(a) << "\n";
+    run_loop("Class1 length  ", c,[&a]{(void) length(a);});
+    run_loop("Class1 length1 ", c,[&a]{(void) length1(a);});
   }
   {
     using namespace ClassSolution2;
     auto a = makeCons(12, makeCons(23, makeNil()));
-    cout << length(a) << "\n";
+    run_loop("Class2 length  ", c,[&a]{(void) length(a);});
   }
   {
     using namespace ClassSolution3;
     auto a = makeCons(12, makeCons(23, makeNil()));
-    cout << length(a) << "\n";
+    run_loop("Class3 length  ", c,[&a]{(void) length(a);});
   }
   {
     using namespace VisitorClassSolution;
     auto a = makeCons(12, makeCons(23, makeNil()));
-    cout << length(a) << "\n";
+    run_loop("Visitor length  ", c,[&a]{(void) length(a);});
   }
   {
     using namespace AllClassSolution;
     auto a = makeCons(12, makeCons(23, makeNil()));
-    cout << length(a) << "\n";
-    cout << length1(a) << "\n";
-    cout << length2(a) << "\n";
-    cout << length3(a) << "\n";
-    cout << length4(a) << "\n";
+    run_loop("All length  ", c,[&a]{(void) length(a);});
+    run_loop("All length1 ", c,[&a]{(void) length1(a);});
+    run_loop("All length2 ", c,[&a]{(void) length2(a);});
+    run_loop("All length3 ", c,[&a]{(void) length3(a);});
+    run_loop("All length4 ", c,[&a]{(void) length4(a);});
   }
   {
     using namespace VariantSolution;
     auto a = makeCons(12, makeCons(23, makeNil()));
-    cout << length(a) << "\n";
-    cout << length1(a) << "\n";
+    run_loop("Variant length  ", c,[&a]{(void) length(a);});
+    run_loop("Variant length1 ", c,[&a]{(void) length1(a);});
   }
 }
