@@ -1,1 +1,1 @@
-CXXFLAGS+=-std=c++0x -g -O2 -Wall
+CXXFLAGS+=-std=c++0x -g -O3 -Wall

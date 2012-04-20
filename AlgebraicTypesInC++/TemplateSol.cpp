@@ -233,6 +233,11 @@ int main(){
   {
     using namespace AllClassSolution;
     auto a = makeCons(12, makeCons(23, makeNil()));
+    std::cout << length(a) << "\n";
+    std::cout << length1(a) << "\n";
+    std::cout << length2(a) << "\n";
+    std::cout << length3(a) << "\n";
+    std::cout << length4(a) << "\n";
     auto c = 1000000;
     run_loop("Template length  ", c,[&a]{(void) length(a);});
     run_loop("Template length1 ", c,[&a]{(void) length1(a);});
