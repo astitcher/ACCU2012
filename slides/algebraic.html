@@ -35,6 +35,24 @@
 
 </div>
 
+<!-- For syntax highlighting -->
+
+<!-- Include required JS files -->
+<script type="text/javascript" src="js/shCore.js"></script>
+
+<!-- Highlight c++ --> 
+<script type="text/javascript" src="js/shBrushCpp.js"></script>
+ 
+<!-- Include *at least* the core style and default theme -->
+<link href="css/shCore.css" rel="stylesheet" type="text/css" />
+<link href="css/shThemeDefault.css" rel="stylesheet" type="text/css" />
+ 
+<!-- Finally, to actually run the highlighter, you need to include this JS on your page -->
+<script type="text/javascript">
+    SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.all()
+</script>
 
 <div class="presentation">
 
@@ -44,6 +62,30 @@
 <h4>Red Hat</h4>
 </div>
 
+<div class="slide">
+<h1>Use a union</h1>
+<script type="syntaxhighlighter" class="brush: cpp"><![CDATA[
+  enum intlist_const {Cons, Nil};
+  struct intlist {
+    intlist_const type;
+    union {
+      tuple<int, intlist_ptr> consdata;
+    };
+
+    intlist(intlist_const t): type(t) {}
+
+    ~intlist() {
+        switch (type) {
+        case Cons: consdata.~tuple<int, intlist_ptr>();return;
+        case Nil: return;
+        }
+    }
+  };
+]]></script>
+<div class="handout">
+[any material that should appear in print but not on the slide]
+</div>
+</div>
 
 <div class="slide">
 <h1>[slide title]</h1>
