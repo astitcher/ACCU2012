@@ -48,6 +48,7 @@ using std::logic_error;
 
     virtual ~ADatatypeBase() {}
     virtual Discriminator type() const = 0;
+    operator Discriminator () const {return type();}
     virtual typename ADVisitor::ReturnType apply(const ADVisitor&) = 0;
   };
 
@@ -184,7 +185,7 @@ namespace AllClassSolution {
   }
 
   int length3(const intlist_ptr& v) {
-    switch (v->type()) {
+    switch (*v) {
     case Nil::code():
       return 0;
     case Cons::code(): {
