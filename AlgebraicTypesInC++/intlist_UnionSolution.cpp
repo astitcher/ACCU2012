@@ -26,16 +26,22 @@ namespace UnionSolution {
     intlist_const type;
     // Don't really need a union here but would
     // with more than one constructor carrying data
-    union u {
+    union {
       tuple<int, intlist_ptr> consdata;
-      u() {}; // Need this because of new unrestricted union rules
-      ~u() {};
-    } u;
+    };
+
     intlist(intlist_const t): type(t) {}
+
+    ~intlist() {
+        switch (type) {
+        case Cons: consdata.~tuple<int, intlist_ptr>();return;
+        case Nil: return;
+        }
+    }
   };
 
   // Have one accessor function here for every datatype constructor
-  tuple<int, intlist_ptr>& cons(const intlist_ptr& il) { return il->u.consdata; }
+  tuple<int, intlist_ptr>& cons(const intlist_ptr& il) { return il->consdata; }
 
   // Have one constructor (factory) function here for each datatype constructor
 #ifdef SHARED_PTR  
