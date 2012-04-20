@@ -12,47 +12,6 @@ using std::logic_error;
 
 #define SHARED_PTR
 
-  // General Base class for algebraic datatypes
-  // the root type inherits from this class
-  // supplying the discriminator type and the
-  // Visitor base class
-  template <typename D, typename V>
-  class ADatatypeBase {
-  public:
-    typedef D Discriminator;
-    typedef V ADVisitor;
-
-    virtual ~ADatatypeBase() {}
-    virtual Discriminator type() const = 0;
-    virtual typename ADVisitor::ReturnType apply(const ADVisitor&) = 0;
-  };
-
-  // The individual data type constructors inherit from here
-  // with supplying the root datatype class, a discriminator value
-  // and the type of the contained data
-  template <typename T, typename T::Discriminator C, typename D>
-  class ADatatype: public T {
-    const D v;
-
-    typename T::Discriminator type() const {return C;}
-  public:
-    template<typename... Args>
-    explicit ADatatype(Args... a) :
-      v(a...)
-    {}
-    const D& data() const {
-      return v;
-    }
-    static constexpr typename T::Discriminator code() {return C;}
-  };
-
-  template <typename T, typename T::Discriminator C>
-  class ADatatype<T,C,void>: public T {
-    typename T::Discriminator type() const {return C;}
-  public:
-    static constexpr typename T::Discriminator code() {return C;}
-  };
-
   // Visitor base template
   template <typename R, typename T>
   class VisitorBase {
@@ -71,12 +30,59 @@ using std::logic_error;
   // call unambiguous visit function - without this
   // you can't call because they are defined in multiple
   // baseclasses which fails the name lookup phase
-  // (even before you get to the overload resolution)
+  // (even before you get to the overload resolution)qq
   template <typename R, typename T, typename... Ts>
   const VisitorBase<R,T>& visitor_cast(const Visitor<R,Ts...>& r) {
     return r;
   }
   
+  // General Base class for algebraic datatypes
+  // the root type inherits from this class
+  // supplying the discriminator type and the
+  // Visitor base class
+  template <typename D, typename V>
+  class ADatatypeBase {
+  public:
+    typedef D Discriminator;
+    typedef V ADVisitor;
+
+    virtual ~ADatatypeBase() {}
+    virtual Discriminator type() const = 0;
+    virtual typename ADVisitor::ReturnType apply(const ADVisitor&) = 0;
+  };
+
+  // The individual data type constructors inherit from here
+  // with supplying the root datatype class, a discriminator value
+  // the datat type itself (CRTP) and the type of the contained data
+  template <typename T, typename T::Discriminator C, typename M, typename D>
+  class ADatatype: public T {
+    const D v;
+
+    typename T::Discriminator type() const {return C;}
+    typename T::ADVisitor::ReturnType apply(const typename T::ADVisitor& v) {
+      return visitor_cast<typename T::ADVisitor::ReturnType,M>(v)(static_cast<M&>(*this));
+    }
+  public:
+    template<typename... Args>
+    explicit ADatatype(Args... a) :
+      v(a...)
+    {}
+    const D& data() const {
+      return v;
+    }
+    static constexpr typename T::Discriminator code() {return C;}
+  };
+
+  template <typename T, typename T::Discriminator C, typename M>
+  class ADatatype<T,C,M,void>: public T {
+    typename T::Discriminator type() const {return C;}
+    typename T::ADVisitor::ReturnType apply(const typename T::ADVisitor& v) {
+      return visitor_cast<typename T::ADVisitor::ReturnType,M>(v)(static_cast<M&>(*this));
+    }
+  public:
+    static constexpr typename T::Discriminator code() {return C;}
+  };
+
 namespace AllClassSolution {
   class intlist;
 #ifdef SHARED_PTR
@@ -101,19 +107,11 @@ namespace AllClassSolution {
     virtual int length() const = 0;
   };
 
-  class Nil: public ADatatype<intlist, types::Nil, void> {
-    ADVisitor::ReturnType apply(const ADVisitor& v) {
-      return visitor_cast<ADVisitor::ReturnType,Nil>(v)(*this);
-    }
-
+  class Nil: public ADatatype<intlist, types::Nil, Nil, void> {
     int length() const;
   };
 
-  class Cons: public ADatatype <intlist, types::Cons, tuple<int, intlist_ptr>> {
-    ADVisitor::ReturnType apply(const ADVisitor& v) {
-      return visitor_cast<ADVisitor::ReturnType,Cons>(v)(*this);
-    }
-
+  class Cons: public ADatatype <intlist, types::Cons, Cons, tuple<int, intlist_ptr>> {
     int length() const;
 
   public:
