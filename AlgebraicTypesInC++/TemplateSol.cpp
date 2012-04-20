@@ -12,61 +12,70 @@ using std::logic_error;
 
 #define SHARED_PTR
 
-// General template to make algebraic datatype declarations easier
-
-  template <typename T, typename V>
-  class ADatatype_base {
+  // General Base class for algebraic datatypes
+  // the root type inherits from this class
+  // supplying the discriminator type and the
+  // Visitor base class
+  template <typename D, typename V>
+  class ADatatypeBase {
   public:
-    typedef T types;
-    typedef V Visitor;
+    typedef D Discriminator;
+    typedef V ADVisitor;
 
-    virtual ~ADatatype_base() {}
-    virtual types type() const = 0;
-    virtual int apply(const Visitor&) = 0;
+    virtual ~ADatatypeBase() {}
+    virtual Discriminator type() const = 0;
+    virtual typename ADVisitor::ReturnType apply(const ADVisitor&) = 0;
   };
 
-  template <typename T, typename T::types C, typename D>
+  // The individual data type constructors inherit from here
+  // with supplying the root datatype class, a discriminator value
+  // and the type of the contained data
+  template <typename T, typename T::Discriminator C, typename D>
   class ADatatype: public T {
     const D v;
 
-    typename T::types type() const {return C;}
+    typename T::Discriminator type() const {return C;}
   public:
     template<typename... Args>
-    ADatatype(Args... a) :
+    explicit ADatatype(Args... a) :
       v(a...)
     {}
     const D& data() const {
       return v;
     }
-    static constexpr typename T::types code() {return C;}
+    static constexpr typename T::Discriminator code() {return C;}
   };
 
-  template <typename T, typename T::types C>
+  template <typename T, typename T::Discriminator C>
   class ADatatype<T,C,void>: public T {
-    typename T::types type() const {return C;}
+    typename T::Discriminator type() const {return C;}
   public:
-    static constexpr typename T::types code() {return C;}
+    static constexpr typename T::Discriminator code() {return C;}
   };
 
-  // This approach to providing multiple virtual functions
-  // with the different signature fails to work because function
-  // lookup only looks for the first place with a member of the
-  // name we're after. If that scope doesn't have a matching
-  // member function then it will just fail.
-  template <typename R, typename... Ts>
-  class AVisitor;
-
+  // Visitor base template
   template <typename R, typename T>
-  class AVisitor<R,T> {
+  class VisitorBase {
   public:
     virtual R operator()(const T&) const = 0;
   };
 
-  template <typename R, typename T, typename... Ts>
-  class AVisitor<R,T,Ts...> : public AVisitor<R, Ts...> {
+  // Empty combining class
+  template <typename R, typename... Ts>
+  class Visitor : public VisitorBase<R, Ts>... {
   public:
-    virtual R operator()(const T&) const = 0;
+    typedef R ReturnType;
   };
+  
+  // Cast Visitor to correct base so that you can
+  // call unambiguous visit function - without this
+  // you can't call because they are defined in multiple
+  // baseclasses which fails the name lookup phase
+  // (even before you get to the overload resolution)
+  template <typename R, typename T, typename... Ts>
+  const VisitorBase<R,T>& visitor_cast(const Visitor<R,Ts...>& r) {
+    return r;
+  }
   
 namespace AllClassSolution {
   class intlist;
@@ -85,31 +94,24 @@ namespace AllClassSolution {
   class Nil;
   class Cons;
   
-  template <typename T>
-  class intlistVisitor {
-  public:
-    virtual T operator()(const Nil&) const = 0;
-    virtual T operator()(const Cons&) const = 0;
-  };
-
   enum class types {Cons, Nil};
 
-  class intlist : public ADatatype_base<types, intlistVisitor<int>> {
+  class intlist : public ADatatypeBase<types, Visitor<int,Nil,Cons>> {
   public:
     virtual int length() const = 0;
   };
 
   class Nil: public ADatatype<intlist, types::Nil, void> {
-    int apply(const Visitor& v) {
-      return v(*this);
+    ADVisitor::ReturnType apply(const ADVisitor& v) {
+      return visitor_cast<ADVisitor::ReturnType,Nil>(v)(*this);
     }
 
     int length() const;
   };
 
   class Cons: public ADatatype <intlist, types::Cons, tuple<int, intlist_ptr>> {
-    int apply(const Visitor& v) {
-      return v(*this);
+    ADVisitor::ReturnType apply(const ADVisitor& v) {
+      return visitor_cast<ADVisitor::ReturnType,Cons>(v)(*this);
     }
 
     int length() const;
@@ -153,6 +155,14 @@ namespace AllClassSolution {
     return 1 + il->length();
   }
 
+  // Did try to speed this up by creating these constant
+  // versions of the typeids that are constant but it makes
+  // no difference. The compiler is already smart enough to
+  // know that they are constant:
+  // const std::type_info& NilTypeInfo(typeid(Nil));
+  // const std::type_info& ConsTypeInfo(typeid(Cons));
+  // For gcc at least typeid comparison is slow because it actually
+  // has to compare the actual mangled type name which can be large.
   int length1(const intlist_ptr& v) {
     if (typeid(*get(v)) == typeid(Nil)) {
       return 0;
@@ -190,7 +200,7 @@ namespace AllClassSolution {
     }
   }
 
-  class intlistlength: public intlistVisitor<int> {
+  class intlistlength: public Visitor<int,Nil,Cons> {
     int operator() (const Nil&) const {
       return 0;
     }
