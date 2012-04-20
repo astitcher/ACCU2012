@@ -87,12 +87,12 @@ namespace AllClassSolution {
   class intlist;
 #ifdef SHARED_PTR
   typedef shared_ptr<intlist> intlist_ptr;
-  inline intlist* get(intlist_ptr il) {
+  inline intlist* get(const intlist_ptr& il) {
     return il.get();
   }
 #else
   typedef intlist* intlist_ptr;
-  inline intlist* get(intlist_ptr il) {
+  inline intlist* get(const intlist_ptr& il) {
     return il;
   }
 #endif
