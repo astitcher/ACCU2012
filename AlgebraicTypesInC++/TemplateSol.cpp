@@ -65,7 +65,7 @@ using std::logic_error;
   public:
     template<typename... Args>
     explicit ADatatype(Args... a) :
-      v(a...)
+      v(std::forward<Args>(a)...)
     {}
     const D& data() const {
       return v;
