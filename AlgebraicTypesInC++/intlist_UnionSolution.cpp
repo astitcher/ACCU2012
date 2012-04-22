@@ -21,6 +21,7 @@ namespace UnionSolution {
 }
 
 namespace UnionSolution {
+// [[[[UnionDefinition
   enum intlist_const {Cons, Nil};
   struct intlist {
     intlist_const type;
@@ -39,7 +40,7 @@ namespace UnionSolution {
         }
     }
   };
-
+// ]]]]UnionDefinition
   // Have one accessor function here for every datatype constructor
   tuple<int, intlist_ptr>& cons(const intlist_ptr& il) { return il->consdata; }
 
