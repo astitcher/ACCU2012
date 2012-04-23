@@ -1,3 +1,4 @@
+(* [[[[SmlExpressionType *)
 type expression =
   | Plus of expression * expression
   | Minus of expression * expression
@@ -8,6 +9,7 @@ type expression =
   | Variable of string
   | Integer of int
   | Float of float
+(* ]]]]SmlExpressionType *)
 
 
 let rec string_of_exp = function
@@ -22,8 +24,9 @@ let rec string_of_exp = function
   | Float f -> string_of_float f
 
 (* Model environment as function used to lookup variable *)
+(* [[[[SmlExpressionEval *)
 let rec eval exp env =
-  let lookup v env = env v
+  let lookup env v = env v
   in
   match exp with
     | Plus (e1, e2) -> (eval e1 env) +. (eval e2 env)
@@ -34,7 +37,8 @@ let rec eval exp env =
     | Negate (e1) -> ~-. (eval e1 env)
     | Integer i -> float i
     | Float f -> f
-    | Variable v -> lookup v env
+    | Variable v -> lookup env v
+(* ]]]]SmlExpressionEval *)
 
 exception VariableNotfound of string
 

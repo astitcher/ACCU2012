@@ -59,7 +59,6 @@ Don Stewart in an answer on stackoverflow.com
 </p>
 </div>
 <div class="handout">
-[any material that should appear in print but not on the slide]
 </div>
 </div>
 
@@ -73,7 +72,6 @@ Also known as:
 </ul>
 </div>
 <div class="handout">
-[any material that should appear in print but not on the slide]
 </div>
 </div>
 
@@ -128,7 +126,48 @@ Calculate absolute magnitude
 </div>
 
 <div class="slide">
-<h1>Examples</h1>
+<h1>Simple recursive list type</h1>
+<div class="slidecontent">
+<pre class="sh_caml">
+<code>
+[[[[SmlMylist]]]]
+</code>
+</pre>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>More complex recursive type</h1>
+<div class="slidecontent">
+<pre class="sh_caml">
+<code>
+[[[[SmlExpressionType]]]]
+</code>
+</pre>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>More complex recursive type</h1>
+<div class="slidecontent">
+<pre class="sh_caml">
+<code>
+[[[[SmlExpressionEval]]]]
+</code>
+</pre>
+</div>
+<div class="handout">
+Note that we model the environment as a function taking the string name of a variable
+and returning the float value of the variable.
+</div>
+</div>
+
+<div class="slide">
+<h1>Simple Integer List</h1>
 <div class="slidecontent">
 <pre class="sh_caml">
 <code>
@@ -137,11 +176,31 @@ Calculate absolute magnitude
 </pre>
 </div>
 <div class="handout">
+Note that I'm aware that this definition for length isn't very space efficient
+because it isn't tail recursive. So it is more efficient to use a
+function definition that accumulates the length and tail calls a 2 argument
+version of the length function like so:
 <pre class="sh_caml">
 <code>
 [[[[SmlIntlistAcc]]]]
 </code>
 </pre>
+But this is more complex and doesn't add much to the exposition that follows except
+to make it harder to follow because of the extra details.
+</div>
+</div>
+
+<div class="slide">
+<h1>C++ Implementation Approaches</h1>
+<div class="slidecontent">
+<ul class="incremental">
+<li>Union</li>
+<li>Class</li>
+<li>Boost Variant</li>
+</ul>
+</div>
+<div class="handout">
+[any material that should appear in print but not on the slide]
 </div>
 </div>
 
@@ -155,7 +214,6 @@ Calculate absolute magnitude
 </pre>
 </div>
 <div class="handout">
-[any material that should appear in print but not on the slide]
 </div>
 </div>
 
@@ -174,7 +232,6 @@ Calculate absolute magnitude
 [any material that should appear in print but not on the slide]
 </div>
 </div>
-
 
 </div>
 

@@ -4,14 +4,16 @@ type intlist = Cons of int * intlist | Nil
 let rec length il = 
   match il with
     | Nil -> 0
-    | Cons (_, il) -> 1 + length(il)
+    | Cons (_, tl) -> 1 + length(tl)
+
+let seq = Cons (12, Cons (23, Nil))
 (* ]]]]SmlIntlist *)
 (* [[[[SmlIntlistAcc *)
 let length1 il = 
   let rec len n il =
   match il with
     | Nil -> n
-    | Cons (_, il) -> len (n+1) il
+    | Cons (_, tl) -> len (n+1) tl
   in
   len 0 il
 (* ]]]]SmlIntlistAcc *)

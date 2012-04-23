@@ -23,4 +23,9 @@ let magnitude n =
     | Complex (r,i) -> sqrt(r**2. +. i**2.)
     | Rational (a,b) -> abs_float (float a /. float b)
 (* ]]]]SmlNumberMag *)
+(* [[[[SmlMylist *)
+type 'a mylist = Nil | Cons of 'a * 'a mylist
+
+let seq = Cons(12, Cons(23, Cons(56, Nil)))
+(* ]]]]SmlMylist *)
 
