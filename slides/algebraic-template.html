@@ -81,15 +81,11 @@ Also known as:
 <ul>
 <li>Simple enumeration types</li>
 <pre class="sh_caml">
-<code>
 [[[[SimpleEnum]]]]
-</code>
 </pre>
 <li>Simple tuple/record type</li>
 <pre class="sh_caml">
-<code>
 [[[[SimpleRecord]]]]
-</code>
 </pre>
 </ul>
 </div>
@@ -102,9 +98,7 @@ Also known as:
 <div class="slidecontent">
 Simple model for numbers
 <pre class="sh_caml">
-<code>
 [[[[SmlNumberType]]]]
-</code>
 </pre>
 </div>
 <div class="handout">
@@ -116,9 +110,7 @@ Simple model for numbers
 <div class="slidecontent">
 Calculate absolute magnitude
 <pre class="sh_caml">
-<code>
 [[[[SmlNumberMag]]]]
-</code>
 </pre>
 </div>
 <div class="handout">
@@ -129,9 +121,7 @@ Calculate absolute magnitude
 <h1>Simple recursive list type</h1>
 <div class="slidecontent">
 <pre class="sh_caml">
-<code>
 [[[[SmlMylist]]]]
-</code>
 </pre>
 </div>
 <div class="handout">
@@ -142,9 +132,7 @@ Calculate absolute magnitude
 <h1>More complex recursive type</h1>
 <div class="slidecontent">
 <pre class="sh_caml">
-<code>
 [[[[SmlExpressionType]]]]
-</code>
 </pre>
 </div>
 <div class="handout">
@@ -155,9 +143,7 @@ Calculate absolute magnitude
 <h1>More complex recursive type</h1>
 <div class="slidecontent">
 <pre class="sh_caml">
-<code>
 [[[[SmlExpressionEval]]]]
-</code>
 </pre>
 </div>
 <div class="handout">
@@ -170,9 +156,7 @@ and returning the float value of the variable.
 <h1>Simple Integer List</h1>
 <div class="slidecontent">
 <pre class="sh_caml">
-<code>
 [[[[SmlIntlist]]]]
-</code>
 </pre>
 </div>
 <div class="handout">
@@ -181,9 +165,7 @@ because it isn't tail recursive. So it is more efficient to use a
 function definition that accumulates the length and tail calls a 2 argument
 version of the length function like so:
 <pre class="sh_caml">
-<code>
 [[[[SmlIntlistAcc]]]]
-</code>
 </pre>
 But this is more complex and doesn't add much to the exposition that follows except
 to make it harder to follow because of the extra details.
@@ -191,7 +173,7 @@ to make it harder to follow because of the extra details.
 </div>
 
 <div class="slide">
-<h1>C++ Implementation Approaches</h1>
+<h1>C++ Datatype Approaches</h1>
 <div class="slidecontent">
 <ul class="incremental">
 <li>Union</li>
@@ -200,17 +182,56 @@ to make it harder to follow because of the extra details.
 </ul>
 </div>
 <div class="handout">
-[any material that should appear in print but not on the slide]
+These are the options I will be going over for the implementation of the
+type representation itself. There are independent options for how to
+implement functions using the data type.
 </div>
 </div>
 
 <div class="slide">
-<h1>Use a union</h1>
+<h1>Union for the data</h1>
 <div class="slidecontent">
 <pre class="sh_cpp">
-<code>
 [[[[UnionDefinition]]]]
-</code>
+</pre>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>Union for the data</h1>
+<div class="slidecontent">
+<strong>Data constructors:</strong>
+<pre class="sh_cpp">
+[[[[UnionFactories]]]]
+</pre>
+<strong>Helper Accessors:</strong>
+<pre class="sh_cpp">
+[[[[UnionAccessors]]]]
+</pre>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>Union for the data</h1>
+<div class="slidecontent">
+<pre class="sh_cpp">
+[[[[UnionLength]]]]
+</pre>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>Union for the data</h1>
+<div class="slidecontent">
+<strong>Length function using std::tie for destructuring:</strong>
+<pre class="sh_cpp">
+[[[[UnionLengthTie]]]]
 </pre>
 </div>
 <div class="handout">

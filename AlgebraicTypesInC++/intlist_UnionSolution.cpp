@@ -2,7 +2,6 @@
 #include <memory>
 
 using std::tuple;
-using std::tie;
 using std::get;
 using std::shared_ptr;
 using std::make_shared;
@@ -24,65 +23,67 @@ namespace UnionSolution {
 // Note: Don't really need a union here but would
 // with more than one constructor carrying data
 // [[[[UnionDefinition
-  enum intlist_const {Cons, Nil};
-  struct intlist {
-    intlist_const type;
-    union {
-      tuple<int, intlist_ptr> consdata;
-    };
-
-    intlist(intlist_const t): type(t) {}
-    ~intlist() {
-        switch (type) {
-        case Cons:
-            consdata.~tuple<int, intlist_ptr>();return;
-        case Nil:
-            return;
-        }
-    }
+enum intlist_const {Cons, Nil};
+struct intlist {
+  intlist_const type;
+  union {
+    tuple<int, intlist_ptr> consdata;
   };
+
+  intlist(intlist_const t): type(t) {}
+  ~intlist() {
+      switch (type) {
+      case Cons:
+          consdata.~tuple<int, intlist_ptr>();return;
+      case Nil:
+          return;
+      }
+  }
+};
 // ]]]]UnionDefinition
-  //[[[[UnionAccessors
-  // Have one accessor function here for every datatype constructor
-  tuple<int, intlist_ptr>& cons(const intlist_ptr& il) { return il->consdata; }
-  //]]]]UnionAccessors
+// Have one accessor function here for every datatype constructor
+//[[[[UnionAccessors
+tuple<int, intlist_ptr>& cons(const intlist_ptr& il) { 
+  return il->consdata;
+}
+//]]]]UnionAccessors
 
-  // Have one constructor (factory) function here for each datatype constructor
+// Have one constructor (factory) function here for each datatype constructor
 #ifdef SHARED_PTR  
-  intlist_ptr makeNil() {
-    return make_shared<intlist>(Nil);
-  }
+intlist_ptr makeNil() {
+  return make_shared<intlist>(Nil);
+}
 
-  intlist_ptr makeCons(int i, const intlist_ptr& il) {
-    auto v = make_shared<intlist>(Cons);
-    cons(v) = tie(i, il);
-    return v;
-  }
+intlist_ptr makeCons(int i, const intlist_ptr& il) {
+  auto v = make_shared<intlist>(Cons);
+  cons(v) = std::tie(i, il);
+  return v;
+}
 #else
-  //[[[[UnionFactories
-  intlist_ptr makeNil() {
-    return new intlist(Nil);
-  }
+//[[[[UnionFactories
+intlist_ptr makeNil() {
+  return new intlist(Nil);
+}
 
-  intlist_ptr makeCons(int i, const intlist_ptr& il) {
-    auto v = new intlist(Cons);
-    cons(v) = tie(i, il);
-    return v;
-  }
-  //]]]]UnionFactories
+intlist_ptr makeCons(int i, const intlist_ptr& il) {
+  auto v = new intlist(Cons);
+  cons(v) = std::tie(i, il);
+  return v;
+}
+//]]]]UnionFactories
 #endif
-  //[[[[UnionLength
-  int length(const intlist_ptr& v) {
-    switch (v->type) {
-    case Nil:
-      return 0;
-    case Cons:
-      return 1 + length(get<1>(cons(v)));
-    default:
-      throw logic_error("intlist: not all cases covered");
-    }
+//[[[[UnionLength
+int length(const intlist_ptr& v) {
+  switch (v->type) {
+  case Nil:
+    return 0;
+  case Cons:
+    return 1 + length(get<1>(cons(v)));
+  default:
+    throw logic_error("intlist: not all cases covered");
   }
-  //]]]]UnionLength
+}
+//]]]]UnionLength
 
 // In this version of the length function we explicitly access the 2nd element
 // of the tuple by position, which gets us what we want, but isn't like the template
@@ -97,22 +98,22 @@ namespace UnionSolution {
 // rather than a raw pointer (as we can't use a reference and tie it and the means
 // that it will be copied.
 
-  //[[[[UnionLengthTie
-  int length1(const intlist_ptr& v) {
-    switch (v->type) {
-    case Nil:
-      return 0;
-    case Cons: {
-      // Deconstruct the tuple
-      int i; intlist_ptr il;
-      tie(i,il) = cons(v);
-      return 1 + length1(il);
-    }
-    default:
-      throw logic_error("intlist: not all cases covered");
-    }
+//[[[[UnionLengthTie
+int length1(const intlist_ptr& v) {
+  switch (v->type) {
+  case Nil:
+    return 0;
+  case Cons: {
+    // Deconstruct the tuple
+    int i; intlist_ptr tl;
+    std::tie(i,tl) = cons(v);
+    return 1 + length1(tl);
   }
-  //]]]]UnionLengthTie
+  default:
+    throw logic_error("intlist: not all cases covered");
+  }
+}
+//]]]]UnionLengthTie
 }
 
 // Note that the match construct in length is actually fairly simple
