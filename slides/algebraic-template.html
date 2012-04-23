@@ -53,9 +53,9 @@
 <h1>What are Algebraic Datatypes?</h1>
 <div class="slidecontent">
 <p>
-Algebraic data types are named such since they correspond to an initial algebra in category theory, giving us some laws, some operations and some symbols to manipulate. We may even use algebraic notation for describing regular data structures...
+<blockquote>Algebraic data types are named such since they correspond to an initial algebra in category theory, giving us some laws, some operations and some symbols to manipulate. We may even use algebraic notation for describing regular data structures...</blockquote>
 </p>
-- Don Stewart in an answer on stackoverflow.com
+Don Stewart in an answer on stackoverflow.com
 <a href="http://stackoverflow.com/a/16810/280555">http://stackoverflow.com/a/16810/280555</a>
 </ul>
 </div>
@@ -69,22 +69,18 @@ Algebraic data types are named such since they correspond to an initial algebra 
 <div class="slidecontent">
 <pre class="sh_caml">
 <code>
-type intlist = Cons of int * intlist | Nil
-
-let rec length il = 
-  match il with
-    | Nil -> 0
-    | Cons (_, il) -> 1 + length(il)
-
-let () =
-    let a = Cons (12, Cons (23, Nil)) in
-    Printf.printf "%d\n" (length a)
+[[[[SmlIntlist]]]]
 </code>
 </pre>
 </ul>
 </div>
 <div class="handout">
-[any material that should appear in print but not on the slide]
+<pre class="sh_caml">
+<code>
+I'm aware that
+[[[[SmlIntlistAcc]]]]
+</code>
+</pre>
 </div>
 </div>
 
