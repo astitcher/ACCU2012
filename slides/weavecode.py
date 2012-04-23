@@ -33,7 +33,7 @@ def escapeSource(s):
 
 ## Read source looking for every line like [[[[<mark> and return all the <mark>s
 def findMarks(s):
-    pattern = re.compile(r'.*\[\[\[\[(.*)\s')
+    pattern = re.compile(r'.*\[\[\[\[(.*?)\s.*')
     return [m.group(1) for m in filter(lambda x: x != None, [pattern.match(l) for l in s])]
 
 ## Read file look for marks then read each segment escaped into a dictionary
