@@ -21,28 +21,31 @@ namespace UnionSolution {
 }
 
 namespace UnionSolution {
+// Note: Don't really need a union here but would
+// with more than one constructor carrying data
 // [[[[UnionDefinition
   enum intlist_const {Cons, Nil};
   struct intlist {
     intlist_const type;
-    // Don't really need a union here but would
-    // with more than one constructor carrying data
     union {
       tuple<int, intlist_ptr> consdata;
     };
 
     intlist(intlist_const t): type(t) {}
-
     ~intlist() {
         switch (type) {
-        case Cons: consdata.~tuple<int, intlist_ptr>();return;
-        case Nil: return;
+        case Cons:
+            consdata.~tuple<int, intlist_ptr>();return;
+        case Nil:
+            return;
         }
     }
   };
 // ]]]]UnionDefinition
+  //[[[[UnionAccessors
   // Have one accessor function here for every datatype constructor
   tuple<int, intlist_ptr>& cons(const intlist_ptr& il) { return il->consdata; }
+  //]]]]UnionAccessors
 
   // Have one constructor (factory) function here for each datatype constructor
 #ifdef SHARED_PTR  
@@ -56,6 +59,7 @@ namespace UnionSolution {
     return v;
   }
 #else
+  //[[[[UnionFactories
   intlist_ptr makeNil() {
     return new intlist(Nil);
   }
@@ -65,7 +69,9 @@ namespace UnionSolution {
     cons(v) = tie(i, il);
     return v;
   }
+  //]]]]UnionFactories
 #endif
+  //[[[[UnionLength
   int length(const intlist_ptr& v) {
     switch (v->type) {
     case Nil:
@@ -76,6 +82,7 @@ namespace UnionSolution {
       throw logic_error("intlist: not all cases covered");
     }
   }
+  //]]]]UnionLength
 
 // In this version of the length function we explicitly access the 2nd element
 // of the tuple by position, which gets us what we want, but isn't like the template
@@ -90,6 +97,7 @@ namespace UnionSolution {
 // rather than a raw pointer (as we can't use a reference and tie it and the means
 // that it will be copied.
 
+  //[[[[UnionLengthTie
   int length1(const intlist_ptr& v) {
     switch (v->type) {
     case Nil:
@@ -104,6 +112,7 @@ namespace UnionSolution {
       throw logic_error("intlist: not all cases covered");
     }
   }
+  //]]]]UnionLengthTie
 }
 
 // Note that the match construct in length is actually fairly simple
