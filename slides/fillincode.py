@@ -9,7 +9,7 @@ scanSource(segs, '../AlgebraicTypesInC++/intlist.cpp')
 scanSource(segs, '../AlgebraicTypesInC++/TemplateSol.cpp')
 scanSource(segs, '../AlgebraicTypesInC++/intlist.ml')
 scanSource(segs, '../AlgebraicTypesInC++/expression.ml')
-scanSource(segs, '../AlgebraicTypesInC++/simple.ml')
+scanSource(segs, '../AlgebraicTypesInC++/examples.ml')
 
 
 # Create substituted putput
