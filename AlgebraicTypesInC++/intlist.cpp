@@ -476,13 +476,13 @@ namespace AllClassSolution {
 // constructor:
 #include <boost/variant.hpp>
 namespace VariantSolution {
-typedef intlist* intlist_ptr;
 
 class Cons;
 class Nil;
 
 // [[[[VariantDefinition
 typedef boost::variant<Cons, Nil> intlist;
+typedef intlist* intlist_ptr;
 
 class Nil {
 };
