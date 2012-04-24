@@ -11,45 +11,48 @@ using std::logic_error;
 
 
 namespace ClassSolution1 {
-  class intlist;
-  typedef intlist* intlist_ptr;
+class intlist;
+typedef intlist* intlist_ptr;
 
-  class intlist {
-  public:
-    virtual ~intlist() {}
-  };
+// [[[[Class1Definition
+class intlist {
+public:
+  virtual ~intlist() {}
+};
 
-  class Nil: public intlist {
-  };
+class Nil: public intlist {
+};
 
-  class Cons: public intlist {
-    tuple<int,intlist_ptr> v;
-  public:
-    Cons(int i0, intlist_ptr il0): v(i0, il0) {}
-    const tuple<int, intlist_ptr>& data() const {
-      return v;
-    }
-  };
-
-  const tuple<int, intlist_ptr>& cons(const intlist_ptr il) { return static_cast<Cons*>(il)->data(); }
-
-  intlist_ptr makeNil() {
-    return new Nil;
+class Cons: public intlist {
+  tuple<int,intlist_ptr> v;
+public:
+  Cons(int i0, intlist_ptr il0): v(i0, il0) {}
+  const tuple<int, intlist_ptr>& data() const {
+    return v;
   }
+};
+// ]]]]Class1Definition
 
-  intlist_ptr makeCons(int i, intlist_ptr il) {
-    return new Cons(i, il);
-  }
+const tuple<int, intlist_ptr>& cons(const intlist_ptr il) { return static_cast<Cons*>(il)->data(); }
 
-  int length(intlist_ptr v) {
-    if (typeid(*v) == typeid(Nil)) {
-      return 0;
-    } else if (typeid(*v) == typeid(Cons)) {
-      int i; intlist_ptr il;
-      tie(i, il) = cons(v);
-      return 1 + length(il);
-    } else throw logic_error("intlist: not all cases covered");
-  }
+intlist_ptr makeNil() {
+  return new Nil;
+}
+
+intlist_ptr makeCons(int i, intlist_ptr il) {
+  return new Cons(i, il);
+}
+// [[[[Class1Length
+int length(intlist_ptr v) {
+  if (typeid(*v) == typeid(Nil)) {
+    return 0;
+  } else if (typeid(*v) == typeid(Cons)) {
+    int i; intlist_ptr il;
+    tie(i, il) = cons(v);
+    return 1 + length(il);
+  } else throw logic_error("intlist: not all cases covered");
+}
+// ]]]]Class1Length
 }
 // Note that the data type definition itself seems a lot nicer here -
 // it's still way more verbose than the ml version, but we'll probably
@@ -64,15 +67,17 @@ namespace ClassSolution1 {
 
 // So you could have..
 namespace ClassSolution1 {
-  int length1(intlist_ptr v) {
-    if (dynamic_cast<Nil*>(v)) {
-      return 0;
-    } else if (auto cons = dynamic_cast<Cons*>(v)) {
-      int i; intlist_ptr il;
-      tie(i, il) = cons->data();
-      return 1 + length1(il);
-    } else throw logic_error("intlist: not all cases covered");
-  }
+// [[[[Class1Length1
+int length1(intlist_ptr v) {
+  if (dynamic_cast<Nil*>(v)) {
+    return 0;
+  } else if (auto cons = dynamic_cast<Cons*>(v)) {
+    int i; intlist_ptr il;
+    tie(i, il) = cons->data();
+    return 1 + length1(il);
+  } else throw logic_error("intlist: not all cases covered");
+}
+// ]]]]Class1Length1
 }
 
 // Notice that std::tie again makes the tuple destructuring nice and simple
@@ -80,55 +85,58 @@ namespace ClassSolution1 {
 
 // We can improve this by inventing our own little type info...
 namespace ClassSolution2 {
-  class intlist;
-  typedef intlist* intlist_ptr;
+class intlist;
+typedef intlist* intlist_ptr;
+// [[[[Class2Definition
+class intlist {
+public:
+  virtual ~intlist() {}
+  enum intlist_const {TCons, TNil};
+  virtual intlist_const type() const = 0;
+};
 
-  class intlist {
-  public:
-    virtual ~intlist() {}
-    enum intlist_const {Cons, Nil};
-    virtual intlist_const type() const = 0;
-  };
+class Nil: public intlist {
+  intlist_const type() const {return code();}
+public:
+  static constexpr intlist_const code() {return TNil;}
+};
+// ]]]]Class2Definition
 
-  class Nil: public intlist {
-    intlist_const type() const {return code();}
-  public:
-    static constexpr intlist_const code() {return intlist::Nil;}
-  };
-
-  class Cons: public intlist {
-    intlist_const type() const {return code();}
-    tuple<int, intlist_ptr> v;
-  public:
-    static constexpr intlist_const code() {return intlist::Cons;}
-    Cons(int i0, intlist_ptr il0): v(i0, il0) {}
-    const tuple<int, intlist_ptr>& data() const {
-      return v;
-    }
-  };
-
-  const tuple<int, intlist_ptr>& cons(const intlist_ptr il) { return static_cast<Cons*>(il)->data(); }
-
-  intlist_ptr makeNil() {
-    return new Nil;
+class Cons: public intlist {
+  intlist_const type() const {return code();}
+  tuple<int, intlist_ptr> v;
+public:
+  static constexpr intlist_const code() {return TCons;}
+  Cons(int i0, intlist_ptr il0): v(i0, il0) {}
+  const tuple<int, intlist_ptr>& data() const {
+    return v;
   }
+};
 
-  intlist_ptr makeCons(int i, intlist* il) {
-    return new Cons(i, il);
-  }
+const tuple<int, intlist_ptr>& cons(const intlist_ptr il) { return static_cast<Cons*>(il)->data(); }
 
-  int length(intlist_ptr v) {
-    switch (v->type()) {
-    case Nil::code():
-      return 0;
-    case Cons::code():
-      int i; intlist_ptr il;
-      tie(i, il) = cons(v);
-      return 1 + length(il);
-    default:
-      throw logic_error("intlist: not all cases covered");
-    }
+intlist_ptr makeNil() {
+  return new Nil;
+}
+
+intlist_ptr makeCons(int i, intlist* il) {
+  return new Cons(i, il);
+}
+
+// [[[[Class2Length
+int length(intlist_ptr v) {
+  switch (v->type()) {
+  case Nil::code():
+    return 0;
+  case Cons::code():
+    int i; intlist_ptr il;
+    tie(i, il) = cons(v);
+    return 1 + length(il);
+  default:
+    throw logic_error("intlist: not all cases covered");
   }
+}
+// ]]]]Class2Length
 }
 
 // Note we've had to complicate the base and other classes a bit to 
@@ -150,50 +158,53 @@ namespace ClassSolution2 {
 // Well apart from the dubious conclusion straight out of the 80s, there
 // may be something in this - lets take a look...
 namespace ClassSolution3 {
-  class intlist;
-  typedef intlist* intlist_ptr;
+class intlist;
+typedef intlist* intlist_ptr;
 
-  class intlist {
-  public:
-    virtual ~intlist() {}
-    virtual int length() const = 0;
-  };
+// [[[[Class3BaseDefinition
+class intlist {
+public:
+  virtual ~intlist() {}
+  virtual int length() const = 0;
+};
+// ]]]]Class3BaseDefinition
 
-  class Nil: public intlist {
-    int length() const;
-  };
+class Nil: public intlist {
+  int length() const;
+};
 
-  class Cons: public intlist {
-    tuple<int, intlist_ptr> v;
-    int length() const;
-  public:
-    Cons(int i0, intlist_ptr il0): v(i0, il0) {}
-    const tuple<int, intlist_ptr>& data() const {
-      return v;
-    }
-  };
-
-  intlist_ptr makeNil() {
-    return new Nil;
+class Cons: public intlist {
+  tuple<int, intlist_ptr> v;
+  int length() const;
+public:
+  Cons(int i0, intlist_ptr il0): v(i0, il0) {}
+  const tuple<int, intlist_ptr>& data() const {
+    return v;
   }
+};
 
-  intlist_ptr makeCons(int i, intlist_ptr il) {
-    return new Cons(i, il);
-  }
+intlist_ptr makeNil() {
+  return new Nil;
+}
 
-  int length(intlist_ptr v) {
-    return v->length();
-  }
-  int Nil::length() const {
-    return 0;
-  }
-  int Cons::length() const {
-    return 1 + get<1>(data())->length();
-    // Can't use length(get<1>(v)) because 
-    // name resolution picks out the class member
-    // not the free function, which makes it look
-    // different from the original recursive intent.
-  }
+intlist_ptr makeCons(int i, intlist_ptr il) {
+  return new Cons(i, il);
+}
+// [[[[Class3Length
+int length(intlist_ptr v) {
+  return v->length();
+}
+int Nil::length() const {
+  return 0;
+}
+int Cons::length() const {
+  return 1 + get<1>(data())->length();
+}
+// ]]]]Class3Length
+// Can't use length(get<1>(v)) because 
+// name resolution picks out the class member
+// not the free function, which makes it look
+// different from the original recursive intent.
 }
 // Well this does make the length function nice and brief actually about
 // as short as the ml version. However it has a serious downside - it's
@@ -227,65 +238,71 @@ namespace ClassSolution3 {
 // Big question is how to return a value from the visitors and what type
 // should it be - use a template parameter
 namespace VisitorClassSolution {
-  class intlist;
-  typedef intlist* intlist_ptr;
+class intlist;
+typedef intlist* intlist_ptr;
 
-  class Nil;
-  class Cons;
+class Nil;
+class Cons;
 
-  template <typename T>
-  class intlistVisitor {
-  public:
-    virtual T operator()(const Nil&) const = 0;
-    virtual T operator()(const Cons&) const = 0;
-  };
+// [[[[Visitor
+template <typename T>
+class intlistVisitor {
+public:
+  virtual T operator()(const Nil&) const = 0;
+  virtual T operator()(const Cons&) const = 0;
+};
+// ]]]]Visitor
 
-  class intlist {
-  public:
-    virtual ~intlist() {}
-    virtual int apply(const intlistVisitor<int>&) = 0;
-  };
+// [[[[VisitorClassDefinition
+class intlist {
+public:
+  virtual ~intlist() {}
+  virtual int apply(const intlistVisitor<int>&) = 0;
+};
 
-  class Nil: public intlist {
-    int apply(const intlistVisitor<int>& v) {
-      return v(*this);
-    }
-  };
-
-  class Cons: public intlist {
-    tuple<int,intlist_ptr> v;
-    int apply(const intlistVisitor<int>& v) {
-      return v(*this);
-    }
-  public:
-    Cons(int i0, intlist_ptr il0): v(i0, il0) {}
-    const tuple<int, intlist_ptr>& data() const {
-      return v;
-    }
-  };
-
-  intlist_ptr makeNil() {
-    return new Nil;
+class Nil: public intlist {
+  int apply(const intlistVisitor<int>& v) {
+    return v(*this);
   }
+};
+// ]]]]VisitorClassDefinition
 
-  intlist_ptr makeCons(int i, intlist_ptr il) {
-    return new Cons(i, il);
+class Cons: public intlist {
+  tuple<int,intlist_ptr> v;
+  int apply(const intlistVisitor<int>& v) {
+    return v(*this);
   }
-
-  class intlistlength: public intlistVisitor<int> {
-    int operator() (const Nil&) const {
-      return 0;
-    }
-    int operator() (const Cons& c) const {
-      int i; intlist_ptr il;
-      tie(i, il) = c.data();
-      return 1 + il->apply(*this); // This is what recursion looks like!
-    }
-  };
-
-  int length(intlist_ptr v) {
-    return v->apply(intlistlength());
+public:
+  Cons(int i0, intlist_ptr il0): v(i0, il0) {}
+  const tuple<int, intlist_ptr>& data() const {
+    return v;
   }
+};
+
+intlist_ptr makeNil() {
+  return new Nil;
+}
+
+intlist_ptr makeCons(int i, intlist_ptr il) {
+  return new Cons(i, il);
+}
+
+// [[[[VisitorLength
+class intlistlength: public intlistVisitor<int> {
+  int operator() (const Nil&) const {
+    return 0;
+  }
+  int operator() (const Cons& c) const {
+    int i; intlist_ptr il;
+    tie(i, il) = c.data();
+    return 1 + il->apply(*this); // This is recursion
+  }
+};
+
+int length(intlist_ptr v) {
+  return v->apply(intlistlength());
+}
+// ]]]]VisitorLength
 }
 
 // As with our previous class based solutions the code is very similar especially
@@ -459,41 +476,46 @@ namespace AllClassSolution {
 // constructor:
 #include <boost/variant.hpp>
 namespace VariantSolution {
-  class Cons;
-  class Nil;
+typedef intlist* intlist_ptr;
 
-  typedef boost::variant<Cons, Nil> intlist;
-  typedef intlist* intlist_ptr;
+class Cons;
+class Nil;
 
-  class Nil {
-  };
+// [[[[VariantDefinition
+typedef boost::variant<Cons, Nil> intlist;
 
-  class Cons {
-    tuple<int, intlist_ptr> v;
-  public:
-    Cons(int i0, intlist_ptr il0): v(i0, il0) {}
-    const tuple<int, intlist_ptr>& data() const {
-      return v;
-    }
-  };
+class Nil {
+};
 
-  intlist_ptr makeNil() {
-    return new intlist(Nil());
+class Cons {
+  tuple<int, intlist_ptr> v;
+public:
+  Cons(int i0, intlist_ptr il0): v(i0, il0) {}
+  const tuple<int, intlist_ptr>& data() const {
+    return v;
   }
+};
+// ]]]]VariantDefinition
 
-  intlist_ptr makeCons(int i, intlist_ptr il) {
-    return new intlist(Cons(i, il));
-  }
+intlist_ptr makeNil() {
+  return new intlist(Nil());
+}
 
-  int length(intlist_ptr v) {
-    if ( boost::get<Nil>(v) ) {
-      return 0;
-    } else if (auto cons = boost::get<Cons>(v)) {
-      int i; intlist_ptr il;
-      tie(i, il) = cons->data();
-      return 1 + length(il);
-    } else throw logic_error("intlist: not all cases covered");
-  }
+intlist_ptr makeCons(int i, intlist_ptr il) {
+  return new intlist(Cons(i, il));
+}
+
+// [[[[VariantLength
+int length(intlist_ptr v) {
+  if ( boost::get<Nil>(v) ) {
+    return 0;
+  } else if (auto cons = boost::get<Cons>(v)) {
+    int i; intlist_ptr il;
+    tie(i, il) = cons->data();
+    return 1 + length(il);
+  } else throw logic_error("intlist: not all cases covered");
+}
+// ]]]]VariantLength
 }
 
 // Note that the structure of this is not very different from the original
@@ -504,21 +526,23 @@ namespace VariantSolution {
 // But I bet you lot already thought of that being the OO hotshots you are!
 // [Note need to rearrange material sequence here introduced visitor above]
 namespace VariantSolution {
-  class lengthVisitor: public boost::static_visitor<int> {
-  public:
-    int operator()(const Nil&) const {
-      return 0;
-    }
-    int operator()(const Cons& c) const {
-      int i; intlist_ptr il;
-      tie(i, il) = c.data();
-      return 1 + boost::apply_visitor(*this, *il);
-    }
-  };
-    
-  int length1(intlist_ptr v) {
-    return boost::apply_visitor(lengthVisitor(), *v);
+// [[[[VariantLength1
+class lengthVisitor: public boost::static_visitor<int> {
+public:
+  int operator()(const Nil&) const {
+    return 0;
   }
+  int operator()(const Cons& c) const {
+    int i; intlist_ptr il;
+    tie(i, il) = c.data();
+    return 1 + boost::apply_visitor(*this, *il);
+  }
+};
+  
+int length1(intlist_ptr v) {
+  return boost::apply_visitor(lengthVisitor(), *v);
+}
+// ]]]]VariantLength1
 }
 
 // Note that there are some limitations of the class based with

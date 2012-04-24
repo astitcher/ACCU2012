@@ -104,7 +104,6 @@ int length1(const intlist_ptr& v) {
   case Nil:
     return 0;
   case Cons: {
-    // Deconstruct the tuple
     int i; intlist_ptr tl;
     std::tie(i,tl) = cons(v);
     return 1 + length1(tl);
