@@ -403,6 +403,29 @@ implement functions using the data type.
 </div>
 </div>
 
+<div class="slide">
+<h1>Performance Comparison</h1>
+
+<table>
+<tr><td>Union</td><td></td><td align="right">1.28</td></tr>
+<tr><td>Union</td><td>Using std::tie & shared_ptr</td><td align="right">3.01</td></tr>
+<tr><td>Class</td><td>Virtual member</td><td align="right">1.00</td></tr>
+<tr><td>Class</td><td>RTTI - typeinfo</td><td align="right">16.39</td></tr>
+<tr><td>Class</td><td>RTTI - dynamic_cast</td><td align="right">26.73</td></tr>
+<tr><td>Class</td><td>Handrolled typeinfo</td><td align="right">1.86</td></tr>
+<tr><td>Class</td><td>Visitor</td><td align="right">1.65</td></tr>
+<tr><td>Variant</td><td>Using get<></td><td align="right">2.42</td></tr>
+<tr><td>Variant</td><td>Using visitor</td><td align="right">1.29</td></tr>
+</table>
+<div class="handout">
+<p>
+This was tested by doing the length calculation 1,000,000 times for a list of length 2.
+</p>
+<p>
+Except where noted the figures are nearly identical for raw pointers and shared_ptr.
+</p>
+</div>
+</div>
 
 </div>
 
