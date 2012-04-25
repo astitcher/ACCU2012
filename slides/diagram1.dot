@@ -1,0 +1,11 @@
+graph QpidLanguages {
+    Broker [label="Message\nBroker"];
+    Cpp [label="C++"]
+    Broker -- Cpp;
+    Broker -- Java;
+    Broker -- Ruby;
+    Broker -- Python;
+    Broker -- Perl;
+    Broker -- PHP;
+}
+
