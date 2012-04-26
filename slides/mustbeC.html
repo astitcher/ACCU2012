@@ -87,16 +87,9 @@
 <h1>Low level</h1>
 <div class="slidecontent">
 <ul>
-<li>C is supported everywhere</li>
-<ul>
-<li>Tiny embedded controllers</li>
-<li>Mobile phone handsets </li>
-<li>Desktops</li>
-<li>Servers</li>
-</ul>
-<li>CPU Manufacturers usually support C first</li>
-<li>GCC supports very wide range of CPUs</li>
-<li>Well optimised</li>
+<li>Close to the underlying machine</li>
+<li>Doesn't hide or add much</li>
+<li>Not very much built in</li>
 </ul>
 </div>
 <div class="handout">
@@ -107,20 +100,8 @@
 <h1>Portable Assembler</h1>
 <div class="slidecontent">
 <ul>
-<li></li>
-<li></li>
-</ul>
-</div>
-<div class="handout">
-</div>
-</div>
-
-<div class="slide">
-<h1>What about C++?</h1>
-<div class="slidecontent">
-<ul>
-<li></li>
-<li></li>
+<li>Library fallback code</li>
+<li>Target "compiled" language for DSLs</li>
 </ul>
 </div>
 <div class="handout">
@@ -131,8 +112,35 @@
 <h1>Plugins/Foreign Function Interfaces</h1>
 <div class="slidecontent">
 <ul>
-<li></li>
-<li></li>
+<li>System itself was likely written in C</li>
+<li>C ABI is very simple</li>
+<li>Includes scripting langages</li>
+<ul>
+<li>Python</li>
+<li>Ruby</li>
+<li>Perl</li>
+<li>PHP</li>
+<li>lua</li>
+</ul>
+<li>JVM's JNI</li>
+</ul>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>What about C++?</h1>
+<div class="slidecontent">
+<ul>
+<li>Pro</li>
+<ul>
+<li>C++ superset (nearly) of C</li>
+<li>GCC also supports C++</li>
+</ul>
+<li>C ABI is de facto platform standard</li>
+<li>C++ ABI very complex - less likely to be standardised</li>
+<li>Multiple C++ libs may not coexist in same executable</li>
 </ul>
 </div>
 <div class="handout">
