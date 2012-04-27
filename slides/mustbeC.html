@@ -1,0 +1,279 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>When Only C Will Do</title>
+<!-- metadata -->
+<meta name="generator" content="S5" />
+<meta name="version" content="S5 1.1" />
+<meta name="presdate" content="20050728" />
+<meta name="author" content="Eric A. Meyer" />
+<meta name="company" content="Complex Spiral Consulting" />
+<!-- configuration parameters -->
+<meta name="defaultView" content="slideshow" />
+<meta name="controlVis" content="hidden" />
+<!-- style sheet links -->
+<link rel="stylesheet" href="ui/default/slides.css" type="text/css" media="projection" id="slideProj" />
+<link rel="stylesheet" href="ui/default/outline.css" type="text/css" media="screen" id="outlineStyle" />
+<link rel="stylesheet" href="ui/default/print.css" type="text/css" media="print" id="slidePrint" />
+<link rel="stylesheet" href="ui/default/opera.css" type="text/css" media="projection" id="operaFix" />
+<!-- S5 JS -->
+<script src="ui/default/slides.js" type="text/javascript"></script>
+
+</head>
+<body>
+
+<div class="layout">
+<div id="controls"><!-- DO NOT EDIT --></div>
+<div id="currentSlide"><!-- DO NOT EDIT --></div>
+<div id="header"></div>
+<div id="footer">
+<h1>ACCU 2012/Oxford</h1>
+<h2>When Only C Will Do</h2>
+</div>
+</div>
+
+<div class="presentation">
+
+<div class="slide">
+<h1>When Only C Will Do</h1>
+<h2>or at least when you should seriously consider it</h2>
+<h3>Andrew Stitcher</h3>
+<h4>Red Hat</h4>
+</div>
+
+<div class="slide">
+<h1>Disclaimers</h1>
+<div class="slidecontent">
+<ul>
+<li>What I'm not saying</li>
+<ul>
+<li>C is suitable for everything</li>
+<li>C should be more widely used</li>
+<li>Anything fundamentally new</li>
+</ul>
+<li>These considerations are practical</li>
+<li>I may make mistakes</li>
+</ul>
+</div>
+<div class="handout">
+</div>
+</div>
+
+
+<div class="slide">
+<h1>Portability</h1>
+<div class="slidecontent">
+<ul>
+<li>C is supported everywhere</li>
+<ul>
+<li>Tiny embedded controllers</li>
+<li>Mobile phone handsets </li>
+<li>Desktops</li>
+<li>Servers</li>
+</ul>
+<li>CPU Manufacturers usually support C first</li>
+<li>GCC supports very wide range of CPUs</li>
+<li>Well optimised</li>
+</ul>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>Low level</h1>
+<div class="slidecontent">
+<ul>
+<li>Close to the underlying machine</li>
+<li>Doesn't hide or add much</li>
+<li>Not very much built in</li>
+</ul>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>Portable Assembler</h1>
+<div class="slidecontent">
+<ul>
+<li>Library fallback code</li>
+<li>Target "compiled" language for DSLs</li>
+</ul>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>Plugins/Foreign Function Interfaces</h1>
+<div class="slidecontent">
+<ul>
+<li>System itself was likely written in C</li>
+<li>C ABI is very simple</li>
+<li>Includes scripting langages</li>
+<ul>
+<li>Python</li>
+<li>Ruby</li>
+<li>Perl</li>
+<li>PHP</li>
+<li>lua</li>
+</ul>
+<li>JVM's JNI</li>
+</ul>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>What about C++?</h1>
+<div class="slidecontent">
+<ul>
+<li>Pro</li>
+<ul>
+<li>C++ superset (nearly) of C</li>
+<li>GCC also supports C++</li>
+</ul>
+<li>C ABI is de facto platform standard</li>
+<li>C++ ABI very complex - less likely to be standardised</li>
+<li>Multiple C++ libs may not coexist in same executable</li>
+</ul>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>"Social" Reasons</h1>
+<div class="slidecontent">
+<ul>
+<li>C is most popular open source language by far</li>
+<li>40% of Open Source release last year was C</li>
+<li>Next was C++ with only 15%, then Java with 7.5%</li>
+<li>So using C gives you the largest pool of developers</li>
+</ul>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>Qpid</h1>
+<div class="slidecontent">
+<ul>
+<li>Open source (Apache project)</li>
+<li>"Messaging middleware"</li>
+<li>Uses standard open protocol AMQP</li>
+<li>Client - server</li>
+</ul>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>Qpid: What our users want</h1>
+<div class="slidecontent">
+<p>
+<object data="diagram1.svg" type="image/svg+xml"> </object>
+</p>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>Qpid: Language Support</h1>
+<div class="slidecontent">
+<ul>
+<li>Qpid currently supports</li>
+<ul>
+<li>C++</li>
+<li>Java</li>
+<li>Python</li>
+<li>ruby</li>
+<li>Perl</li>
+<li>.Net</li>
+</ul>
+<li>Platforms</li>
+<ul>
+<li>Linux</li>
+<li>Windows</li>
+<li>FreeBSD (soon)</li>
+</ul>
+</ul>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>Qpid: Implementation</h1>
+<div class="slidecontent">
+<ul>
+<li>Three (3!) separate implementations of AMQP</li>
+<li>C++, Java, Python</li>
+<li>SWIG C++ for bindings to Ruby and Perl</li>
+<li>.Net has hand written bindings</li>
+</ul>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>AMQP</h1>
+<div class="slidecontent">
+<ul>
+<li>Protocol revisions</li>
+<li>0-8, 0-9, 0-9.1, 0-10</li>
+<li>Maintenance effort too high</li>
+</ul>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>AMQP 1.0</h1>
+<div class="slidecontent">
+<ul>
+<li>AMQP now has a proposed international standard </li>
+<li>Will be 1.0 version</li>
+<li>Very different from previous protocol versions</li>
+<li>Don't want to implement/maintain 3 protocol implementations</li>
+<li>Domain of use has opened up</li>
+<li>Decided to implement 1.0 protocol engine in C</li>
+</ul>
+</div>
+<div class="handout">
+</div>
+</div>
+
+<div class="slide">
+<h1>Summary</h1>
+<div class="slidecontent">
+<ul>
+<li>There are still good reasons to use C even in a new project</li>
+<li>But these are probably not the majority of things being programmed today</li>
+<li>Consider C when</li>
+<ul>
+<li>Coding libraries for wide use</li>
+<li>Code that needs to run on many different platforms</li>
+<li>Open source</li>
+</ul>
+</ul>
+</div>
+<div class="handout">
+</div>
+</div>
+
+
+</div>
+
+</body>
+</html>
