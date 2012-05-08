@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE abiword PUBLIC "-//ABISOURCE//DTD AWML 1.0 Strict//EN" "http://www.abisource.com/awml.dtd">
-<abiword template="false" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:math="http://www.w3.org/1998/Math/MathML" xid-max="328" xmlns:dc="http://purl.org/dc/elements/1.1/" fileformat="1.1" xmlns:svg="http://www.w3.org/2000/svg" xmlns:awml="http://www.abisource.com/awml.dtd" xmlns="http://www.abisource.com/awml.dtd" xmlns:xlink="http://www.w3.org/1999/xlink" version="2.8.6" xml:space="preserve" props="dom-dir:ltr; document-footnote-restart-section:0; document-endnote-type:numeric; document-endnote-place-enddoc:1; document-endnote-initial:1; lang:en-US; document-endnote-restart-section:0; document-footnote-restart-page:0; document-footnote-type:numeric; document-footnote-initial:1; document-endnote-place-endsection:0">
+<abiword template="false" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:math="http://www.w3.org/1998/Math/MathML" xid-max="330" xmlns:dc="http://purl.org/dc/elements/1.1/" fileformat="1.1" xmlns:svg="http://www.w3.org/2000/svg" xmlns:awml="http://www.abisource.com/awml.dtd" xmlns="http://www.abisource.com/awml.dtd" xmlns:xlink="http://www.w3.org/1999/xlink" version="2.8.6" xml:space="preserve" props="dom-dir:ltr; document-footnote-restart-section:0; document-endnote-type:numeric; document-endnote-place-enddoc:1; document-endnote-initial:1; lang:en-US; document-endnote-restart-section:0; document-footnote-restart-page:0; document-footnote-type:numeric; document-footnote-initial:1; document-endnote-place-endsection:0">
 <!-- ======================================================================== -->
 <!-- This file is an AbiWord document.                                        -->
 <!-- AbiWord is a free, Open Source word processor.                           -->
@@ -12,15 +12,18 @@
 <m key="dc.format">application/x-abiword</m>
 <m key="abiword.generator">AbiWord</m>
 </metadata>
-<history version="3" edit-time="21490" last-saved="1335387352" uid="0205a4b4-8ee7-11e1-809f-c0a9172c3967">
+<history version="5" edit-time="21624" last-saved="1336496367" uid="0205a4b4-8ee7-11e1-809f-c0a9172c3967">
 <version id="3" started="1335366841" uid="0b5bd718-8f19-11e1-809f-c0a9172c3967" auto="0" top-xid="318"/>
+<version id="5" started="1336496306" uid="2ba59912-992f-11e1-82d3-ad0b31b6d335" auto="0" top-xid="330"/>
 </history>
 <styles>
-<s type="P" name="Normal" basedon="" followedby="Current Settings" props="font-family:Liberation Serif; margin-top:0pt; font-variant:normal; margin-left:0pt; text-indent:0in; widows:2; font-style:normal; font-weight:normal; text-decoration:none; color:000000; line-height:1.0; text-align:left; margin-bottom:0pt; text-position:normal; margin-right:0pt; bgcolor:transparent; font-size:12pt; font-stretch:normal"/>
+<s type="P" name="Normal" followedby="Current Settings" props="font-family:Liberation Serif; margin-top:0pt; color:000000; margin-left:0pt; text-position:normal; widows:2; font-style:normal; text-indent:0in; font-variant:normal; font-weight:normal; margin-right:0pt; font-size:12pt; text-decoration:none; margin-bottom:0pt; line-height:1.0; bgcolor:transparent; text-align:left; font-stretch:normal"/>
 </styles>
 <pagesize pagetype="A4" orientation="portrait" width="210.000000" height="297.000000" units="mm" page-scale="1.000000"/>
 <section xid="152">
-<p style="Normal" xid="153" props="text-align:left; dom-dir:ltr">Hello, I'm Andrew Stitcher, I work for Red Hat which as you know is a large open source company and the open source world provides at least some of the perspective for this talk: "When only C will do"</p>
+<p style="Normal" xid="153" props="text-align:left; dom-dir:ltr">[Don’t pay too much attention to this text - it’s very rough working out of the talk, I mean embarrassingly rough. I’m keeping it because I should turn it into a real essay/article]</p>
+<p style="Normal" xid="329" props="text-align:left; dom-dir:ltr"><c></c></p>
+<p style="Normal" xid="330" props="text-align:left; dom-dir:ltr"><c></c>Hello, I'm Andrew Stitcher, I work for Red Hat which as you know is a large open source company and the open source world provides at least some of the perspective for this talk: "When only C will do"</p>
 <p style="Normal" xid="156"><c></c></p>
 <p style="Normal" xid="157" props="text-align:left; dom-dir:ltr">Looking at a couple of the other talks at this years ACCU conference I think I might be taking a rather unpopular direction. After all you might have just come from a talk telling you that C is going the way of the Dodo - or perhaps that isn't exactly what Dirk was saying - I couldn't get to that talk as I was busy here in this room trying to keep people from their post prandial nap! I hope I succeeded for at least some of them.</p>
 <p style="Normal" xid="164"><c></c></p>
@@ -122,13 +125,13 @@
 <p style="Normal" xid="2" props="text-align:left; dom-dir:ltr">﻿Open source releases by sloc in the past 12 months:</p>
 <table xid="3">
 <cell xid="4" props="bot-attach:1; left-attach:0; right-attach:1; top-attach:0">
-<p xid="5"><c>Rank</c><c props=""></c></p>
+<p xid="5">Rank<c></c></p>
 </cell>
 <cell xid="7" props="bot-attach:1; left-attach:1; right-attach:2; top-attach:0">
-<p xid="8"><c>Language</c><c props=""></c></p>
+<p xid="8">Language<c></c></p>
 </cell>
 <cell xid="10" props="bot-attach:1; left-attach:2; right-attach:3; top-attach:0">
-<p xid="11"><c>%</c><c props=""></c></p>
+<p xid="11">%<c></c></p>
 </cell>
 <cell xid="13" props="bot-attach:2; left-attach:0; right-attach:1; top-attach:1">
 <p xid="14">1</p>
@@ -266,11 +269,11 @@
 <p xid="146">1.01</p>
 </cell>
 </table>
-<p style="Normal" xid="149"></p>
+<p style="Normal" xid="149"><c></c></p>
 <p style="Normal" xid="151">* Source Black Duck software</p>
-<p style="Normal" xid="150"></p>
+<p style="Normal" xid="150"><c></c></p>
 <p style="Normal" xid="322">This is by lines of code so last year 40% of the code released was in C, which is the largest by far - C++ at 15% is next. Of course LoC is a very crude measure, by even so it indicates that there are still a lot of C open source coders out there.</p>
-<p style="Normal" xid="320"></p>
+<p style="Normal" xid="320"><c></c></p>
 <p style="Normal" xid="288" props="text-align:left; dom-dir:ltr">* Open source systems software is almost entirely written in C (The new linker gold is about the only exception I could find), and there is not so much experience in this world with maintaining C++ code, there is actually a level of antagonism to the language - in the real world this is an issue.</p>
 <p style="Normal" xid="327" props="text-align:left; dom-dir:ltr"><c></c></p>
 <p style="Normal" xid="328" props="text-align:left; dom-dir:ltr"><c></c>* C++ is a big complex language and in a loose community it is hard to coalesce on a subset, as there is always someone who wants to try that exciting feature they've just heard about. This means that the code can grow in mutually incomprehensible silos. As only a developer who has worked on a section of code can maintain that code easily. This quickly becomes a barrier to development.</p>
