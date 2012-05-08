@@ -1,0 +1,24 @@
+This is the raw source for my slide decks:
+
+Both slide decks use S5 [1] which allow you to
+create slide decks and handouts and a reasonable
+printed form using stylesheets and pretty simple
+html. I recommend it.
+
+The interesting thing I have done here is to integrate
+the shjs [2] source code pretty printer into the mix. And also
+to add my own little source code extraction tool in python
+which snips code out of the source code material and puts
+it into a new html file appropriately quoted.
+
+I didn't have to say "Hmm, my powerpoint compiler isn't
+working today" even once!
+
+A cleverer (and more javascript savvy) person would have managed to
+do the code extraction directly in javascript, probably using the file
+apis [3] - I look forward to seeing any attempts!
+
+Links:
+[1] http://meyerweb.com/eric/tools/s5/
+[2] http://shjs.sourceforge.net/
+[3] http://www.html5rocks.com/en/tutorials/file/dndfiles/
